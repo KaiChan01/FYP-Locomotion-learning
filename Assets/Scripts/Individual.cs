@@ -35,10 +35,11 @@ public class Individual {
     public GeneType createRandomGene()
     {
         //Hard coding these values for now
-        GeneType gene = new GeneType(90, 200);
+        GeneType gene = new GeneType(150, 200, 0.02f);
         return gene;
     }
 
+    /*
     public Individual crossover(Individual partner)
     {
     //Child should have the same gene size as parent
@@ -52,6 +53,7 @@ public class Individual {
 
         return child;
     }
+    
 
     public void mutate(float mutationRate)
     {
@@ -64,6 +66,14 @@ public class Individual {
             }
         }
     }
+    */
+
+    //This approach is to try and mutate the creature and learn that way rather than crossbreeding
+    public void mutate(int geneIndex)
+    {
+        genes[geneIndex] = createRandomGene();
+    }
+
 
     //What determines fitness?
     public float calculateFitness(Vector3 currentPosition)

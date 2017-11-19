@@ -23,7 +23,7 @@ public class Creature : MonoBehaviour {
     private System.Random randomGenerator = new System.Random();
     private int populationSize = 10;
     private int geneLoopCount = 5;
-    private int geneSize = 5;
+    private int geneSize = 3;
     private float mutationRate = 0.05f;
     private float startingDist;
     private bool nextMovement;
@@ -54,12 +54,11 @@ public class Creature : MonoBehaviour {
 
         geneticAlgorithm = new GeneticAlgorithm(populationSize, geneSize, randomGenerator, mutationRate, startingDist, targetPosition);
         geneticAlgorithm.populate();
-        Time.timeScale = 1;
+        Time.timeScale = 100;
 
         nextMovement = true;
-
-        enabled = true;
         Application.runInBackground = true;
+        enabled = true;
     }
 
     // Update is called once per frame
@@ -67,14 +66,15 @@ public class Creature : MonoBehaviour {
     {
         if (nextMovement)
         {
-            if (geneticAlgorithm.generatation == 10)
+            if ((geneticAlgorithm.generatation%10) == 0)
             {
-                geneLoopCount = 20;
+                
                 Time.timeScale = 1;
+                geneLoopCount = 5;
             }
             else
             {
-                Time.timeScale = 1;
+                Time.timeScale = 100;
                 geneLoopCount = 5;
             }
             StartCoroutine(moveLimb());
@@ -107,26 +107,26 @@ public class Creature : MonoBehaviour {
                             jLimit.min = genes.jLimitMax;
                             motor.targetVelocity = genes.targetVelocity;
                             motor.force = 500;
-                            //rotationPoint.axis = genes.newAxis;
-                            rotationPoint.limits = jLimit;
+                            rotationPoint.axis = genes.newAxis;
                             rotationPoint.motor = motor;
                             rotationPoint.useMotor = true;
                             nextMovement = false;
-                            yield return new WaitForSeconds(2);
+                            yield return new WaitForSeconds(1);
                             nextMovement = true;
                         }
                     }
                     counter++;
                 }
 
-                geneticAlgorithm.population[i].calculateFitness(firstJoint.transform.position);
-                //resets too much for some reason
-                resetCreature();
+            geneticAlgorithm.population[i].calculateFitness(firstJoint.transform.position);
+            Debug.Log("index: [" + i + "] " + geneticAlgorithm.population[i].fitnessValue);
+            resetCreature();
             }
 
-            geneticAlgorithm.calculateTotalFitness(startingDist);
-            geneticAlgorithm.breedNewGeneration();
-            print(geneticAlgorithm.generatation);
+        //geneticAlgorithm.calculateTotalFitness(startingDist);
+        geneticAlgorithm.chooseBaseForNextGeneration();
+        geneticAlgorithm.mutatePopulation(randomGenerator);
+        print(geneticAlgorithm.generatation);
     }
 }
 

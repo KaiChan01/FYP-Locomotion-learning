@@ -15,7 +15,7 @@ public class GeneType
     public Vector3 newAxis { get; private set; }
 
 
-    public GeneType(int jointLimit, float velocity)
+    public GeneType(int jointLimit, float velocity, float maxRotation)
     {
         //Setting up variables
         this.velocity = velocity;
@@ -24,6 +24,6 @@ public class GeneType
         jLimitMin = Random.Range(0, -jointLimit);
 
         targetVelocity = Random.value > 0.5 ? velocity : -velocity;
-        newAxis = new Vector3(Random.Range(1,10), Random.Range(1, 10), Random.Range(1, 10));
+        newAxis = new Vector3(1, Random.Range(-maxRotation, maxRotation), 0);
     }
 }
