@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class GeneType
 {
-    private System.Random generator = new System.Random();
     public float targetVelocity { get; private set; }
     public int jLimitMax { get; private set; }
     public int jLimitMin { get; private set; }

@@ -13,15 +13,13 @@ public class Individual {
     public GeneType[] genes { get; private set; }
     public float fitnessValue { get; private set; }
     private Vector3 targetPosition;
-    private System.Random random;
     private float startingDist;
     private int geneSize;
 
-    public Individual(int geneSize, System.Random random, float startingDist, Vector3 targetPosition)
+    public Individual(int geneSize, float startingDist, Vector3 targetPosition)
     {
         this.geneSize = geneSize;
         this.genes = new GeneType[geneSize];
-        this.random = random;
         this.startingDist = startingDist;
         this.targetPosition = targetPosition;
 
@@ -30,6 +28,16 @@ public class Individual {
         {
             genes[i] = createRandomGene();
         }
+    }
+
+    public Individual(Individual oneForCopy)
+    {
+        this.geneSize = oneForCopy.geneSize;
+        this.genes = new GeneType[geneSize];
+        this.startingDist = oneForCopy.startingDist;
+        this.targetPosition = oneForCopy.targetPosition;
+
+        this.genes = oneForCopy.genes;
     }
 
     public GeneType createRandomGene()

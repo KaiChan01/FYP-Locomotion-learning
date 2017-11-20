@@ -10,28 +10,31 @@ public class Creature : MonoBehaviour {
 
     public GameObject firstJoint;
     public GameObject secondJoint;
+    public GameObject thirdJoint;
     public GameObject target;
 
 
     private Vector3 creatureStartPosition;
     private Vector3 creatureStartPosition2;
-
+    private Vector3 creatureStartPosition3;
     private Quaternion creatureStartRotation;
     private Quaternion creatureStartRotation2;
+    private Quaternion creatureStartRotation3;
 
     private Vector3 targetPosition;
-    private System.Random randomGenerator = new System.Random();
+    private System.Random randomGenerator = new System.Random(1);
     private int populationSize = 10;
     private int geneLoopCount = 5;
     private int geneSize = 3;
-    private float mutationRate = 0.05f;
     private float startingDist;
     private bool nextMovement;
 
     private GeneticAlgorithm geneticAlgorithm;
 
     private HingeJoint rotationPoint;
+    private HingeJoint rotationPoint2;
     private HingeJoint startJointSetting;
+    private HingeJoint startJointSetting2;
     private JointMotor motor;
     private JointLimits jLimit;
 
@@ -41,18 +44,22 @@ public class Creature : MonoBehaviour {
     {
         enabled = false;
         startJointSetting = rotationPoint = secondJoint.GetComponent<HingeJoint>();
+        startJointSetting2 = rotationPoint2 = thirdJoint.GetComponent<HingeJoint>();
+
         motor = rotationPoint.motor;
         jLimit = rotationPoint.limits;
 
         creatureStartPosition = firstJoint.transform.position;
         creatureStartPosition2 = secondJoint.transform.position;
+        creatureStartPosition3 = thirdJoint.transform.position;
         creatureStartRotation = firstJoint.transform.rotation;
         creatureStartRotation2 = secondJoint.transform.rotation;
+        creatureStartRotation3 = thirdJoint.transform.rotation;
         targetPosition = target.transform.position;
 
         startingDist = Vector3.Distance(creatureStartPosition, targetPosition);
 
-        geneticAlgorithm = new GeneticAlgorithm(populationSize, geneSize, randomGenerator, mutationRate, startingDist, targetPosition);
+        geneticAlgorithm = new GeneticAlgorithm(populationSize, geneSize, startingDist, targetPosition);
         geneticAlgorithm.populate();
         Time.timeScale = 100;
 
@@ -69,15 +76,18 @@ public class Creature : MonoBehaviour {
             if ((geneticAlgorithm.generatation%10) == 0)
             {
                 
-                Time.timeScale = 1;
+                Time.timeScale = 5;
                 geneLoopCount = 5;
+                StartCoroutine(viewFittest());
             }
             else
             {
-                Time.timeScale = 100;
+                Time.timeScale = 20;
                 geneLoopCount = 5;
+                //training
+                StartCoroutine(moveLimb());
             }
-            StartCoroutine(moveLimb());
+            
         }
         
     }
@@ -86,8 +96,10 @@ public class Creature : MonoBehaviour {
     {
         firstJoint.transform.position = creatureStartPosition;
         secondJoint.transform.position = creatureStartPosition2;
+        thirdJoint.transform.position = creatureStartPosition3;
         firstJoint.transform.rotation = creatureStartRotation;
         secondJoint.transform.rotation = creatureStartRotation2;
+        thirdJoint.transform.rotation = creatureStartRotation3;
         rotationPoint = startJointSetting;
     }
 
@@ -125,9 +137,38 @@ public class Creature : MonoBehaviour {
 
         //geneticAlgorithm.calculateTotalFitness(startingDist);
         geneticAlgorithm.chooseBaseForNextGeneration();
-        geneticAlgorithm.mutatePopulation(randomGenerator);
+        //geneticAlgorithm.mutatePopulation(randomGenerator);
         print(geneticAlgorithm.generatation);
     }
-}
+
+    IEnumerator viewFittest()
+    {
+        //Check fitness
+
+            int counter = 0;
+            while (counter < geneLoopCount)
+            {
+                for (int j = 0; j < geneSize; j++)
+                {
+                    {
+                        GeneType genes = geneticAlgorithm.fittestSoFar.genes[j];
+                        jLimit.max = genes.jLimitMax;
+                        jLimit.min = genes.jLimitMax;
+                        motor.targetVelocity = genes.targetVelocity;
+                        motor.force = 500;
+                        rotationPoint.axis = genes.newAxis;
+                        rotationPoint.motor = motor;
+                        rotationPoint.useMotor = true;
+                        nextMovement = false;
+                        yield return new WaitForSeconds(1);
+                        nextMovement = true;
+                    }
+                }
+                counter++;
+            }
+            resetCreature();
+        geneticAlgorithm.generatation++;
+        }
+    }
 
 
