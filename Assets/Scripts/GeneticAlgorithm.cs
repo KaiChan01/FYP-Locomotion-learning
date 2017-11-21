@@ -109,15 +109,11 @@ public class GeneticAlgorithm {
             currentHighestFittness = tempIndividual.fitnessValue;
             Debug.Log("new fittest");
             fittestSoFar = new Individual(tempIndividual);
-            Debug.Log(fittestSoFar.genes[0].ToString());
             for (int i = 0; i < populationSize; i++)
             {
                 population[i] = new Individual(fittestSoFar);
             }
             Debug.Log("Mutating new fittest canidate population with fitness: " + fittestSoFar.fitnessValue + " Generation: " + generatation);
-            Debug.Log(fittestSoFar.genes[2].jLimitMax);
-            Debug.Log(fittestSoFar.genes[2].jLimitMin);
-            Debug.Log(fittestSoFar.genes[2].targetVelocity);
         }
         else
         {
@@ -127,9 +123,6 @@ public class GeneticAlgorithm {
             }
             Debug.Log("Mutating same population" + " Generation: " + generatation);
             Debug.Log(fittestSoFar.fitnessValue);
-            Debug.Log(fittestSoFar.genes[2].jLimitMax);
-            Debug.Log(fittestSoFar.genes[2].jLimitMin);
-            Debug.Log(fittestSoFar.genes[2].targetVelocity);
         }
 
         generatation++;
