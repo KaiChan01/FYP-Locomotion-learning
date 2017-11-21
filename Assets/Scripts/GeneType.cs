@@ -25,4 +25,17 @@ public class GeneType
         targetVelocity = Random.value > 0.5 ? velocity : -velocity;
         newAxis = new Vector3(1, Random.Range(-maxRotation, maxRotation), 0);
     }
+
+    //Constructor for copying
+    public GeneType(GeneType geneForCopying)
+    {
+        //Setting up variables
+        this.velocity = geneForCopying.velocity;
+
+        jLimitMax = geneForCopying.jLimitMax;
+        jLimitMin = geneForCopying.jLimitMin;
+
+        targetVelocity = geneForCopying.targetVelocity;
+        newAxis = geneForCopying.newAxis;
+    }
 }

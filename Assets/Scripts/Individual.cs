@@ -36,8 +36,17 @@ public class Individual {
         this.genes = new GeneType[geneSize];
         this.startingDist = oneForCopy.startingDist;
         this.targetPosition = oneForCopy.targetPosition;
+        this.fitnessValue = oneForCopy.fitnessValue;
 
-        this.genes = oneForCopy.genes;
+        copyGenes(oneForCopy.genes);
+    }
+
+    private void copyGenes(GeneType[] genesToCopy)
+    {
+        for(int i = 0; i < geneSize; i++)
+        {
+            this.genes[i] = new GeneType(genesToCopy[i]);
+        }
     }
 
     public GeneType createRandomGene()

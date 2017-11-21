@@ -44,17 +44,17 @@ public class Creature : MonoBehaviour {
     {
         enabled = false;
         startJointSetting = rotationPoint = secondJoint.GetComponent<HingeJoint>();
-        startJointSetting2 = rotationPoint2 = thirdJoint.GetComponent<HingeJoint>();
+        //startJointSetting2 = rotationPoint2 = thirdJoint.GetComponent<HingeJoint>();
 
         motor = rotationPoint.motor;
         jLimit = rotationPoint.limits;
 
         creatureStartPosition = firstJoint.transform.position;
         creatureStartPosition2 = secondJoint.transform.position;
-        creatureStartPosition3 = thirdJoint.transform.position;
+        //creatureStartPosition3 = thirdJoint.transform.position;
         creatureStartRotation = firstJoint.transform.rotation;
         creatureStartRotation2 = secondJoint.transform.rotation;
-        creatureStartRotation3 = thirdJoint.transform.rotation;
+        //creatureStartRotation3 = thirdJoint.transform.rotation;
         targetPosition = target.transform.position;
 
         startingDist = Vector3.Distance(creatureStartPosition, targetPosition);
@@ -69,21 +69,21 @@ public class Creature : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         if (nextMovement)
         {
             if ((geneticAlgorithm.generatation%10) == 0)
             {
-                
-                Time.timeScale = 5;
-                geneLoopCount = 5;
+
+                Time.timeScale = 1;
+                geneLoopCount = 15;
                 StartCoroutine(viewFittest());
             }
             else
             {
-                Time.timeScale = 20;
-                geneLoopCount = 5;
+                Time.timeScale = 100;
+                geneLoopCount = 15;
                 //training
                 StartCoroutine(moveLimb());
             }
@@ -96,10 +96,10 @@ public class Creature : MonoBehaviour {
     {
         firstJoint.transform.position = creatureStartPosition;
         secondJoint.transform.position = creatureStartPosition2;
-        thirdJoint.transform.position = creatureStartPosition3;
+        //thirdJoint.transform.position = creatureStartPosition3;
         firstJoint.transform.rotation = creatureStartRotation;
         secondJoint.transform.rotation = creatureStartRotation2;
-        thirdJoint.transform.rotation = creatureStartRotation3;
+        //thirdJoint.transform.rotation = creatureStartRotation3;
         rotationPoint = startJointSetting;
     }
 
@@ -166,7 +166,7 @@ public class Creature : MonoBehaviour {
                 }
                 counter++;
             }
-            resetCreature();
+        resetCreature();
         geneticAlgorithm.generatation++;
         }
     }
