@@ -10,19 +10,22 @@ using System;
 
 public class GeneticAlgorithm {
 
-    public float fitness { get; private set; }
-    public int populationSize;
+    public float fitnessSum { get; private set; }
+    public int populationSize { get; private set; }
     public int generatation { get; set; }
     public Individual[] population { get; private set; }
     public Individual fittestSoFar { get; private set; }
+    public System.Random rand { get; private set; }
+    public float currentHighestFittness { get; private set; }
+    public float startingDist { get; private set; }
+    public Vector3 targetPosition { get; private set; }
+    public int geneSize { get; private set; }
 
-    private float currentHighestFittness;
-    private float startingDist;
-    private Vector3 targetPosition;
-    private int geneSize;
+    public int[] bestGene { get; private set; }
+    public float bestFitness { get; private set; }
 
     //Create population and size
-    public GeneticAlgorithm(int populationSize, int geneSize, float startingDist, Vector3 targetPosition)
+    public GeneticAlgorithm(int populationSize, System.Random random, int geneSize, float startingDist, Vector3 targetPosition)
     {
         this.generatation = 1;
         this.populationSize = populationSize;
@@ -30,6 +33,9 @@ public class GeneticAlgorithm {
         this.targetPosition = targetPosition;
         this.geneSize = geneSize;
         this.currentHighestFittness = 100;
+        this.rand = random;
+        this.bestGene = new int[geneSize];
+        this.bestFitness = 0;
 
         population = new Individual[populationSize];
     }
@@ -38,12 +44,11 @@ public class GeneticAlgorithm {
     {
         for (int i = 0; i < populationSize; i++)
         {
-            population[i] = new Individual(geneSize, startingDist, targetPosition);
+            population[i] = new Individual(geneSize, rand, startingDist, targetPosition);
         }
     }
 
-    /*
-    public void breedNewGeneration()
+    public void breedNewGeneration(float mutationRate)
     {
         Individual[] newGeneration = new Individual[populationSize];
         for (int i = 0; i < populationSize / 2; i++)
@@ -57,35 +62,54 @@ public class GeneticAlgorithm {
             child2.mutate(mutationRate);
 
             newGeneration[i * 2] = child1;
-            newGeneration[(i * 2) +1] = child2;
+            newGeneration[(i * 2) + 1] = child2;
         }
         population = newGeneration;
         generatation++;
     }
-    */
-
-    public void mutatePopulation(System.Random rand)
-    {
-        for (int i = 0; i < populationSize-1; i++)
-        {
-            
-            //We keep one of the fittest one
-            population[i].mutate(rand.Next(0, 2));
-        }
-    }
 
     //Need to choose the best parents
-    /*
-    public void calculateTotalFitness(float startingDist)
+    public void calculateTotalFitness()
     {
         fitnessSum = 0;
         for(int i = 0; i < populationSize; i++)
         {
-            fitnessSum += startingDist - population[i].fitnessValue;
+            fitnessSum += population[i].fitnessValue;
+            if(population[i].fitnessValue > bestFitness)
+            {
+                bestFitness = population[i].fitnessValue;
+                bestGene = (int[]) population[i].genes.Clone();
+                Debug.Log(bestFitness);
+            }
         }
     }
-    */
 
+    public Individual chooseParent()
+    {
+        //Set a random varible to find the the best parents first
+        double fitnessLevel = rand.NextDouble() * fitnessSum;
+        for (int i = 0; i < populationSize; i++)
+        {
+            if (fitnessLevel <= population[i].fitnessValue)
+            {
+                return population[i];
+            }
+            //This way the better ones will more likely be choosen first
+            fitnessLevel -= population[i].fitnessValue;
+        }
+        return null;
+    }
+
+    /*
+    public void mutatePopulation(System.Random rand)
+    {
+        for (int i = 0; i < populationSize-1; i++)
+        {
+            //We keep one of the fittest one
+            population[i].mutate(rand.Next(0, 2));
+        }
+    }
+    
     public void chooseBaseForNextGeneration()
     {
         //Set a random varible to find the the best parents first
@@ -124,26 +148,7 @@ public class GeneticAlgorithm {
             Debug.Log("Mutating same population" + " Generation: " + generatation);
             Debug.Log(fittestSoFar.fitnessValue);
         }
-
         generatation++;
-    }
-
-
-    /*
-    public Individual chooseParent()
-    {
-        //Set a random varible to find the the best parents first
-        double fitnessLevel = random.NextDouble() * fitnessSum;
-        for (int i = 0; i < populationSize; i++)
-        {
-            if (fitnessLevel >= population[i].fitnessValue)
-            {
-                return population[i];
-            }
-            //This way the better ones will more likely be choosen first
-            fitnessLevel += population[i].fitnessValue;
-        }
-        return null;
     }
     */
 }

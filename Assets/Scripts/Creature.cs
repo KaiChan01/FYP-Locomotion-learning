@@ -25,8 +25,9 @@ public class Creature : MonoBehaviour {
     private System.Random randomGenerator = new System.Random(1);
     private int populationSize = 10;
     private int geneLoopCount = 5;
-    private int geneSize = 3;
+    private int geneSize = 10;
     private float startingDist;
+    private float mutationRate = 0.02f;
     private bool nextMovement;
 
     private GeneticAlgorithm geneticAlgorithm;
@@ -47,6 +48,8 @@ public class Creature : MonoBehaviour {
 
         motor = rotationPoint.motor;
         jLimit = rotationPoint.limits;
+        rotationPoint.useMotor = true;
+        rotationPoint.useLimits = true;
 
         creatureStartPosition = firstJoint.transform.position;
         creatureStartPosition2 = secondJoint.transform.position;
@@ -56,7 +59,7 @@ public class Creature : MonoBehaviour {
 
         startingDist = Vector3.Distance(creatureStartPosition, targetPosition);
 
-        geneticAlgorithm = new GeneticAlgorithm(populationSize, geneSize, startingDist, targetPosition);
+        geneticAlgorithm = new GeneticAlgorithm(populationSize, randomGenerator, geneSize, startingDist, targetPosition);
         geneticAlgorithm.populate();
         Time.timeScale = 100;
 
@@ -68,23 +71,22 @@ public class Creature : MonoBehaviour {
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (Input.GetKey("down") && Time.timeScale > 1)
+        {
+
+            Time.timeScale = 10;
+        }
+
+        if (Input.GetKey("up") && Time.timeScale < 100)
+        {
+            Time.timeScale = 100;
+        }
+
         if (nextMovement)
         {
-            if ((geneticAlgorithm.generatation%10) == 0)
-            {
-
-                Time.timeScale = 20;
-                geneLoopCount = 15;
-                StartCoroutine(viewFittest());
-            }
-            else
-            {
-                Time.timeScale = 100;
-                geneLoopCount = 15;
-                //training
-                StartCoroutine(moveLimb());
-            }
             
+
+            StartCoroutine(moveLimb());
         }
         
     }
@@ -100,69 +102,67 @@ public class Creature : MonoBehaviour {
 
     IEnumerator moveLimb()
     {
-            //Check fitness
-            for (int i = 0; i < populationSize; i++)
-            {
-                int counter = 0;
-                while (counter < geneLoopCount)
-                {
-                    for (int j = 0; j < geneSize; j++)
-                    {
-                        {
-                            GeneType genes = geneticAlgorithm.population[i].genes[j];
-                            jLimit.max = genes.jLimitMax;
-                            jLimit.min = genes.jLimitMax;
-                            motor.targetVelocity = genes.targetVelocity;
-                            motor.force = 500;
-                            rotationPoint.axis = genes.newAxis;
-                            rotationPoint.motor = motor;
-                            rotationPoint.useMotor = true;
-                            nextMovement = false;
-                            yield return new WaitForSeconds(1);
-                            nextMovement = true;
-                        }
-                    }
-                    counter++;
-                }
-
-            geneticAlgorithm.population[i].calculateFitness(firstJoint.transform.position);
-            Debug.Log("index: [" + i + "] " + geneticAlgorithm.population[i].fitnessValue);
-            resetCreature();
-            }
-
-        //geneticAlgorithm.calculateTotalFitness(startingDist);
-        geneticAlgorithm.chooseBaseForNextGeneration();
-        geneticAlgorithm.mutatePopulation(randomGenerator);
-        print(geneticAlgorithm.generatation);
-    }
-
-    IEnumerator viewFittest()
-    {
         //Check fitness
-
+        for (int i = 0; i < populationSize; i++)
+        {
             int counter = 0;
             while (counter < geneLoopCount)
             {
                 for (int j = 0; j < geneSize; j++)
                 {
-                    {
-                        GeneType genes = geneticAlgorithm.fittestSoFar.genes[j];
-                        jLimit.max = genes.jLimitMax;
-                        jLimit.min = genes.jLimitMax;
-                        motor.targetVelocity = genes.targetVelocity;
-                        motor.force = 500;
-                        rotationPoint.axis = genes.newAxis;
-                        rotationPoint.motor = motor;
-                        rotationPoint.useMotor = true;
-                        nextMovement = false;
-                        yield return new WaitForSeconds(1);
-                        nextMovement = true;
-                    }
+                    mapGeneToMovement(geneticAlgorithm.population[i].genes[j]);
+                    motor.force = 500;
+                    rotationPoint.motor = motor;
+                    nextMovement = false;
+                    yield return new WaitForSeconds(1);
+                    nextMovement = true;
                 }
                 counter++;
             }
+
+        geneticAlgorithm.population[i].calculateFitness(firstJoint.transform.position, targetPosition);
+        Debug.Log("index: [" + i + "] " + geneticAlgorithm.population[i].fitnessValue);
         resetCreature();
         }
+
+        //geneticAlgorithm.calculateTotalFitness(startingDist);
+        geneticAlgorithm.breedNewGeneration(mutationRate);
+        print("Generation: " + geneticAlgorithm.generatation);
     }
+
+    private void mapGeneToMovement(int gene)
+    {
+        switch (gene)
+        {
+            //Contract limb
+            case 0:
+            {
+                motor.targetVelocity = -200;
+                break;
+            }
+            
+            // extend limb
+            case 1:
+            {
+                    motor.targetVelocity = 200;
+                    break;
+            }
+
+            //turn left
+            case 2:
+            {
+                    rotationPoint.axis = new Vector3(1, 0.1f, 0);
+            }
+                break;
+
+            //turn right
+            case 3:
+            {
+                    rotationPoint.axis = new Vector3(1, -0.1f, 0);
+                    break;
+            }
+        }
+    }
+}
 
 
