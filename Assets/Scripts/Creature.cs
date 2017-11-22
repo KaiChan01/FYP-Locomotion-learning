@@ -61,7 +61,7 @@ public class Creature : MonoBehaviour {
 
         geneticAlgorithm = new GeneticAlgorithm(populationSize, randomGenerator, geneSize, startingDist, targetPosition);
         geneticAlgorithm.populate();
-        Time.timeScale = 100;
+        Time.timeScale = 1;
 
         nextMovement = true;
         Application.runInBackground = true;
@@ -71,15 +71,20 @@ public class Creature : MonoBehaviour {
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (Input.GetKey("down") && Time.timeScale > 1)
+        if (Input.GetKey("down") && Time.timeScale > 0)
         {
 
             Time.timeScale = 10;
         }
 
-        if (Input.GetKey("up") && Time.timeScale < 100)
+        if (Input.GetKey("up") && Time.timeScale < 101)
         {
             Time.timeScale = 100;
+        }
+
+        if (Input.GetKey("left"))
+        {
+            Time.timeScale = 1;
         }
 
         if (nextMovement)

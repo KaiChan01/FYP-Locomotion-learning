@@ -7,12 +7,14 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class GeneticAlgorithm {
 
     public float fitnessSum { get; private set; }
     public int populationSize { get; private set; }
     public int generatation { get; set; }
+    public int numOfParentsWanted { get; set; }
     public Individual[] population { get; private set; }
     public Individual fittestSoFar { get; private set; }
     public System.Random rand { get; private set; }
@@ -36,6 +38,7 @@ public class GeneticAlgorithm {
         this.rand = random;
         this.bestGene = new int[geneSize];
         this.bestFitness = 0;
+        this.numOfParentsWanted = 5;
 
         population = new Individual[populationSize];
     }
@@ -51,10 +54,14 @@ public class GeneticAlgorithm {
     public void breedNewGeneration(float mutationRate)
     {
         Individual[] newGeneration = new Individual[populationSize];
+        List<int> parentsList = chooseFittestParents(numOfParentsWanted);
+
         for (int i = 0; i < populationSize / 2; i++)
         {
-            Individual parent1 = chooseParent();
-            Individual parent2 = chooseParent();
+            int chooseParent = UnityEngine.Random.Range(0, numOfParentsWanted - 1);
+            int chooseParent2 = UnityEngine.Random.Range(0, numOfParentsWanted - 1);
+            Individual parent1 = population[parentsList[chooseParent]];
+            Individual parent2 = population[parentsList[chooseParent2]];
             Individual child1 = parent1.crossover(parent2);
             Individual child2 = parent2.crossover(parent1);
 
@@ -84,20 +91,23 @@ public class GeneticAlgorithm {
         }
     }
 
-    public Individual chooseParent()
+    public List<int> chooseFittestParents(int numOfParentsWanted)
     {
-        //Set a random varible to find the the best parents first
-        double fitnessLevel = rand.NextDouble() * fitnessSum;
-        for (int i = 0; i < populationSize; i++)
+        List<int> parentIndex = new List<int>();
+        float highestFitness = 0;
+
+        for (int j = 0; j < numOfParentsWanted; j++)
         {
-            if (fitnessLevel <= population[i].fitnessValue)
+            for (int i = 0; i < populationSize; i++)
             {
-                return population[i];
+                if (highestFitness < population[i].fitnessValue && parentIndex.IndexOf(i) == -1)
+                {
+                    parentIndex.Add(i);
+                }
+                //This way the better ones will more likely be choosen first
             }
-            //This way the better ones will more likely be choosen first
-            fitnessLevel -= population[i].fitnessValue;
         }
-        return null;
+        return parentIndex;
     }
 
     /*
