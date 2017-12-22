@@ -308,8 +308,8 @@ GameObject:
   - component: {fileID: 949612346}
   - component: {fileID: 949612345}
   - component: {fileID: 949612348}
-  - component: {fileID: 949612349}
   - component: {fileID: 949612350}
+  - component: {fileID: 949612349}
   m_Layer: 0
   m_Name: Back right thigh
   m_TagString: Untagged
@@ -413,14 +413,14 @@ HingeJoint:
     spring: 0
     damper: 0
     targetPosition: 0
-  m_UseMotor: 0
+  m_UseMotor: 1
   m_Motor:
-    targetVelocity: 0
-    force: 0
+    targetVelocity: -90
+    force: 90
     freeSpin: 0
-  m_UseLimits: 0
+  m_UseLimits: 1
   m_Limits:
-    min: 0
+    min: -90
     max: 0
     bounciness: 0
     bounceMinVelocity: 0.2
@@ -447,13 +447,13 @@ HingeJoint:
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
-    targetVelocity: 0
-    force: 0
+    targetVelocity: -90
+    force: 90
     freeSpin: 0
-  m_UseLimits: 0
+  m_UseLimits: 1
   m_Limits:
-    min: 0
-    max: 0
+    min: -90
+    max: 90
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
@@ -677,15 +677,15 @@ HingeJoint:
     spring: 0
     damper: 0
     targetPosition: 0
-  m_UseMotor: 0
+  m_UseMotor: 1
   m_Motor:
-    targetVelocity: 0
-    force: 0
+    targetVelocity: 90
+    force: 90
     freeSpin: 0
-  m_UseLimits: 0
+  m_UseLimits: 1
   m_Limits:
     min: 0
-    max: 0
+    max: 90
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
@@ -711,13 +711,13 @@ HingeJoint:
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
-    targetVelocity: 0
-    force: 0
+    targetVelocity: 90
+    force: 90
     freeSpin: 0
-  m_UseLimits: 0
+  m_UseLimits: 1
   m_Limits:
-    min: 0
-    max: 0
+    min: -90
+    max: 90
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
@@ -1006,15 +1006,15 @@ HingeJoint:
     spring: 0
     damper: 0
     targetPosition: 0
-  m_UseMotor: 0
+  m_UseMotor: 1
   m_Motor:
-    targetVelocity: 0
-    force: 0
+    targetVelocity: 90
+    force: 90
     freeSpin: 0
-  m_UseLimits: 0
+  m_UseLimits: 1
   m_Limits:
     min: 0
-    max: 0
+    max: 90
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
@@ -1040,13 +1040,13 @@ HingeJoint:
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
-    targetVelocity: 0
-    force: 0
+    targetVelocity: 90
+    force: 90
     freeSpin: 0
-  m_UseLimits: 0
+  m_UseLimits: 1
   m_Limits:
-    min: 0
-    max: 0
+    min: -90
+    max: 90
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
@@ -1442,11 +1442,11 @@ HingeJoint:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2040049746}
-  m_ConnectedBody: {fileID: 1357729531}
-  m_Anchor: {x: 0, y: 1.0000002, z: 0}
+  m_ConnectedBody: {fileID: 1881356739}
+  m_Anchor: {x: 0, y: -1, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: -0.9999992, z: 0.000000099341044}
+  m_ConnectedAnchor: {x: 0.5, y: 0, z: 0.49999988}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1454,13 +1454,13 @@ HingeJoint:
     targetPosition: 0
   m_UseMotor: 0
   m_Motor:
-    targetVelocity: 0
-    force: 0
+    targetVelocity: -90
+    force: 90
     freeSpin: 0
-  m_UseLimits: 0
+  m_UseLimits: 1
   m_Limits:
-    min: 0
-    max: 0
+    min: -90
+    max: 90
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
@@ -1474,24 +1474,24 @@ HingeJoint:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2040049746}
-  m_ConnectedBody: {fileID: 1881356739}
-  m_Anchor: {x: 0, y: -1, z: 0}
+  m_ConnectedBody: {fileID: 1357729531}
+  m_Anchor: {x: 0, y: 1.0000002, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5, y: 0, z: 0.49999988}
+  m_ConnectedAnchor: {x: 0, y: -0.9999992, z: 0.000000099341044}
   m_UseSpring: 0
   m_Spring:
     spring: 0
     damper: 0
     targetPosition: 0
-  m_UseMotor: 0
+  m_UseMotor: 1
   m_Motor:
-    targetVelocity: 0
-    force: 0
+    targetVelocity: -90
+    force: 90
     freeSpin: 0
-  m_UseLimits: 0
+  m_UseLimits: 1
   m_Limits:
-    min: 0
+    min: -90
     max: 0
     bounciness: 0
     bounceMinVelocity: 0.2
