@@ -20,6 +20,10 @@ public class Creature : MonoBehaviour {
     public Limb rightLeg { get; private set; }
     public Limb leftLeg { get; private set; }
 
+    private NeuralNet brain = null;
+    private Transform creatureStartTransform;
+    private float fitness;
+
     // Use this for initialization
     void Start () {
         body = this.transform.Find("Body").gameObject;
@@ -36,10 +40,38 @@ public class Creature : MonoBehaviour {
         leftArm = new Limb(frontLeftT, body);
         rightLeg = new Limb(backRightT, body);
         leftLeg = new Limb(backLeftT, body);
+
+        this.creatureStartTransform = this.transform;
     }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+    public void resetPosition()
+    {
+        this.transform.position = creatureStartTransform.position;
+        this.transform.rotation = creatureStartTransform.rotation;
+        resetFitness();
+    }
+
+    public void training()
+    {
+    }
+
+    public void calculateFitness()
+    {
+
+    }
+
+    public void resetFitness()
+    {
+        fitness = 0;
+    }
+
+    public void setBrain(NeuralNet newBrain)
+    {
+        this.brain = newBrain;
+    }
 }
