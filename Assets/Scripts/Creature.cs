@@ -23,6 +23,8 @@ public class Creature : MonoBehaviour {
     private NeuralNet brain = null;
     private Transform creatureStartTransform;
     private float fitness;
+    private bool training;
+
 
     // Use this for initialization
     void Start () {
@@ -42,11 +44,21 @@ public class Creature : MonoBehaviour {
         leftLeg = new Limb(backLeftT, body);
 
         this.creatureStartTransform = this.transform;
+        this.training = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
+
+        if(training == true)
+        {
+            float[] inputs = {rightArm.getBodyConnAngle(), rightArm.getLegConnAngle(),
+                leftArm.getBodyConnAngle(), leftArm.getLegConnAngle(),
+                rightLeg.getBodyConnAngle(), rightLeg.getLegConnAngle(),
+                leftLeg.getBodyConnAngle(), leftLeg.getLegConnAngle() };
+
+            float[] outputs = brain.forwardFeed(inputs);
+        }
 	}
 
     public void resetPosition()
@@ -56,7 +68,7 @@ public class Creature : MonoBehaviour {
         resetFitness();
     }
 
-    public void training()
+    public void trainingMethod()
     {
     }
 
@@ -73,5 +85,10 @@ public class Creature : MonoBehaviour {
     public void setBrain(NeuralNet newBrain)
     {
         this.brain = newBrain;
+    }
+
+    public void flipTraining()
+    {
+        this.training = !this.training;
     }
 }

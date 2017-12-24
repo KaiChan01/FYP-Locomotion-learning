@@ -24,4 +24,14 @@ public class Limb {
             }
         }
     }
+
+    public float getBodyConnAngle()
+    {
+        return bodyConnection.angle;
+    }
+
+    public float getLegConnAngle()
+    {
+        return lowerLegConnection.angle;
+    }
 }
