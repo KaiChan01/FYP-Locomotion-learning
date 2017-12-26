@@ -86,9 +86,18 @@ public class GeneticAlgorithm
 
     public void mutatePopulation()
     {
+
+        //Need to calcuateFitness and discard unfit models
+
+
         for(int i = 0; i < populationSize; i++)
         {
             population[i].mutate();
         }
+    }
+
+    public void incrementGeneration()
+    {
+        generatation++;
     }
 }

@@ -14,7 +14,7 @@ public class Limb {
 
         foreach(HingeJoint joint in joints)
         {
-            if(joint.connectedBody = body.GetComponent<Rigidbody>())
+            if(joint.connectedBody == body.GetComponent<Rigidbody>())
             {
                 bodyConnection = joint;
             }
@@ -33,5 +33,17 @@ public class Limb {
     public float getLegConnAngle()
     {
         return lowerLegConnection.angle;
+    }
+
+    public void addForceToBodyHinge(float force)
+    {
+        JointMotor motor = bodyConnection.motor;
+        motor.force = force;
+    }
+
+    public void addForceToLegHinge(float force)
+    {
+        JointMotor motor = lowerLegConnection.motor;
+        motor.force = force;
     }
 }

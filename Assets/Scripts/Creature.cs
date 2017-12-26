@@ -23,7 +23,7 @@ public class Creature : MonoBehaviour {
     private NeuralNet brain = null;
     private Transform creatureStartTransform;
     private float fitness;
-    private bool training;
+    private bool brainAssigned;
 
 
     // Use this for initialization
@@ -44,51 +44,74 @@ public class Creature : MonoBehaviour {
         leftLeg = new Limb(backLeftT, body);
 
         this.creatureStartTransform = this.transform;
-        this.training = false;
+        //this.training = false;
+        fitness = 0;
+        brainAssigned = false;
     }
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 
-        if(training == true)
+        if (brainAssigned == true)
         {
+            //Right now the inputs are just the the angle's of the creature's joints
+
             float[] inputs = {rightArm.getBodyConnAngle(), rightArm.getLegConnAngle(),
                 leftArm.getBodyConnAngle(), leftArm.getLegConnAngle(),
                 rightLeg.getBodyConnAngle(), rightLeg.getLegConnAngle(),
                 leftLeg.getBodyConnAngle(), leftLeg.getLegConnAngle() };
 
             float[] outputs = brain.forwardFeed(inputs);
+
+            mapOutputsToInstruction(outputs);
         }
 	}
 
+    /*
     public void resetPosition()
     {
         this.transform.position = creatureStartTransform.position;
         this.transform.rotation = creatureStartTransform.rotation;
         resetFitness();
     }
+    */
 
-    public void trainingMethod()
+    public void mapOutputsToInstruction(float[] outputs)
     {
+        rightArm.addForceToBodyHinge(outputs[0]);
+        rightArm.addForceToLegHinge(outputs[1]);
+        leftArm.addForceToBodyHinge(outputs[2]);
+        leftArm.addForceToLegHinge(outputs[3]);
+        rightLeg.addForceToBodyHinge(outputs[4]);
+        rightLeg.addForceToLegHinge(outputs[5]);
+        leftLeg.addForceToBodyHinge(outputs[6]);
+        leftLeg.addForceToLegHinge(outputs[7]);
     }
 
     public void calculateFitness()
     {
-
+        fitness = Vector3.Distance(creatureStartTransform.transform.position, new Vector3(creatureStartTransform.transform.position.x, creatureStartTransform.transform.position.y, this.transform.position.z));
     }
 
+    public float getFitness()
+    {
+        return fitness;
+    }
+
+    /*
     public void resetFitness()
     {
         fitness = 0;
     }
+    */
 
     public void setBrain(NeuralNet newBrain)
     {
         this.brain = newBrain;
     }
 
-    public void flipTraining()
+    public void assignedBrain()
     {
-        this.training = !this.training;
+        this.brainAssigned = true;
     }
 }
