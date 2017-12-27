@@ -105,7 +105,7 @@ public NeuralNet(int[] nnStructure)
             }
         }
 
-        return null;
+        return neurons[nnStructure.Length-1];
     }
 
     //Should look into ReLU as an activation function

@@ -24,6 +24,7 @@ public class Creature : MonoBehaviour {
     private Transform creatureStartTransform;
     private float fitness;
     private bool brainAssigned;
+    private bool finishedInit = false;
 
 
     // Use this for initialization
@@ -46,21 +47,21 @@ public class Creature : MonoBehaviour {
         this.creatureStartTransform = this.transform;
         //this.training = false;
         fitness = 0;
-        brainAssigned = false;
+        finishedInit = true;
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+        //Right now the inputs are just the the angle's of the creature's joints
 
-        if (brainAssigned == true)
+        if (finishedInit == true)
         {
-            //Right now the inputs are just the the angle's of the creature's joints
-
             float[] inputs = {rightArm.getBodyConnAngle(), rightArm.getLegConnAngle(),
                 leftArm.getBodyConnAngle(), leftArm.getLegConnAngle(),
                 rightLeg.getBodyConnAngle(), rightLeg.getLegConnAngle(),
                 leftLeg.getBodyConnAngle(), leftLeg.getLegConnAngle() };
 
+            
             float[] outputs = brain.forwardFeed(inputs);
 
             mapOutputsToInstruction(outputs);
@@ -78,6 +79,10 @@ public class Creature : MonoBehaviour {
 
     public void mapOutputsToInstruction(float[] outputs)
     {
+        //I need to come up with a better way of doing this, maybe with Public variables on the script
+
+        //Debug.Log(outputs[0]);
+
         rightArm.addForceToBodyHinge(outputs[0]);
         rightArm.addForceToLegHinge(outputs[1]);
         leftArm.addForceToBodyHinge(outputs[2]);
@@ -107,11 +112,15 @@ public class Creature : MonoBehaviour {
 
     public void setBrain(NeuralNet newBrain)
     {
-        this.brain = newBrain;
+        brain = newBrain;
     }
 
+    /*
     public void assignedBrain()
     {
-        this.brainAssigned = true;
+        brainAssigned = true;
+        Debug.Log("run");
+        Debug.Log(brainAssigned);
     }
+    */
 }

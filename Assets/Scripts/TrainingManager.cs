@@ -20,7 +20,6 @@ public class TrainingManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         training = false;
-        creatureList = new List<Creature>();
         ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout);
         ga.populate();
     }
@@ -30,13 +29,15 @@ public class TrainingManager : MonoBehaviour {
 
 		if(training == true)
         {
-            Invoke("stopTraining", 10);
+
         }
         else
         {
             prepNextGeneration();
             training = true;
+            Debug.Log("Not Training");
             //timer = setTrainingTime;
+            Invoke("stopTraining", 10);
         }
 	}
 
@@ -57,12 +58,13 @@ public class TrainingManager : MonoBehaviour {
             GameObject.Destroy(creatureList[i].gameObject);
         }
         */
-
-        while(creatureList.Count != 0)
+        if(creatureList != null)
         {
-            GameObject.Destroy(creatureList[0].gameObject);
+            for (int i = 0; i < creatureList.Count; i++)
+            {
+                GameObject.Destroy(creatureList[i].gameObject);
+            }
         }
-
 
         ga.mutatePopulation();
         ga.incrementGeneration();
@@ -72,11 +74,14 @@ public class TrainingManager : MonoBehaviour {
 
     public void putNewCreaturesInScene()
     {
-        for(int i = 0; i < numberOfCreatures; i++)
+        creatureList = new List<Creature>();
+
+        for (int i = 0; i < numberOfCreatures; i++)
         {
             creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(UnityEngine.Random.Range(-50f, 50f), -0.5f, UnityEngine.Random.Range(-50f, 50f)), creaturePrefab.transform.rotation)).GetComponent<Creature>());
             creatureList[i].setBrain(ga.population[i]);
-            creatureList[i].assignedBrain();
+            //creatureList[i].assignedBrain();
+            //Debug.Log(creatureList.brain)
         }
     }
 }
