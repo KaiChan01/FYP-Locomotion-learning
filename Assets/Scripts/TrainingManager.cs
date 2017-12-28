@@ -66,6 +66,11 @@ public class TrainingManager : MonoBehaviour {
             }
         }
 
+        if(ga.generatation > 0)
+        {
+            ga.replaceOldParentWithNew(5);
+        }
+
         ga.mutatePopulation();
         ga.incrementGeneration();
 

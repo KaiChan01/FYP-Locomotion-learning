@@ -7,6 +7,7 @@
 
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class GeneticAlgorithm
 {
@@ -22,7 +23,7 @@ public class GeneticAlgorithm
     //Create population and size
     public GeneticAlgorithm(int populationSize, int[] neuralStructure)
     {
-        this.generatation = 1;
+        this.generatation = 0;
         this.populationSize = populationSize;
         this.neuralStructure = neuralStructure;
         population = new NeuralNet[populationSize];
@@ -84,12 +85,46 @@ public class GeneticAlgorithm
         return null;
     }
 
+    public void replaceOldParentWithNew(int numOfParentsWanted)
+    {
+        List<int> parentIndex = new List<int>();
+
+        for (int j = 0; j < numOfParentsWanted; j++)
+        {
+            float highestFitness = 0;
+            int highestIndex = -1;
+            for (int i = 0; i < populationSize; i++)
+            {
+                if (highestFitness <= population[i].getFitness() && parentIndex.IndexOf(i) == -1)
+                {
+                    highestFitness = population[i].getFitness();
+                    highestIndex = i;
+                }
+                //This way the better ones will more likely be choosen first
+            }
+            parentIndex.Add(highestIndex);
+        }
+
+        int[] parentIndexArray = parentIndex.ToArray();
+
+        NeuralNet[] newPopulation = new NeuralNet[populationSize];
+
+        //Top parents are sure to be in the new population
+        for (int i = 0; i < parentIndexArray.Length; i++)
+        {
+            newPopulation[i] = new NeuralNet(population[i]);
+        }
+
+        for (int i = parentIndexArray.Length; i < populationSize; i++)
+        {
+            newPopulation[i] = new NeuralNet(population[UnityEngine.Random.Range(0, parentIndexArray.Length - 1)]);
+        }
+
+        population = newPopulation;
+    }
+
     public void mutatePopulation()
     {
-
-        //Need to calcuateFitness and discard unfit models
-
-
         for(int i = 0; i < populationSize; i++)
         {
             population[i].mutate();
