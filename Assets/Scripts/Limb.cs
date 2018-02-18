@@ -7,7 +7,9 @@ public class Limb {
     Component[] joints;
     HingeJoint bodyConnection;
     HingeJoint lowerLegConnection;
-    float targetVelocity = 50;
+
+    /* THIS SHOULD BE DIFFERENT FOR THE BACK LEGS */
+    float force = 500;
 
     public Limb(GameObject thigh, GameObject body)
     {
@@ -36,20 +38,20 @@ public class Limb {
         return lowerLegConnection.angle;
     }
 
-    public void addForceToBodyHinge(float force)
+    public void addForceToBodyHinge(float targetVelocity)
     {
         JointMotor motor = bodyConnection.motor;
-        motor.targetVelocity = targetVelocity;
-        motor.force = force*1000;
+        motor.targetVelocity = targetVelocity * 500;
+        motor.force = force;
         bodyConnection.motor = motor;
         bodyConnection.useMotor = true;
     }
 
-    public void addForceToLegHinge(float force)
+    public void addForceToLegHinge(float targetVelocity)
     {
         JointMotor motor = lowerLegConnection.motor;
-        motor.targetVelocity = targetVelocity;
-        motor.force = force*1000;
+        motor.targetVelocity = targetVelocity * 500;
+        motor.force = force;
         lowerLegConnection.motor = motor;
         lowerLegConnection.useMotor = true;
     }

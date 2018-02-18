@@ -5,6 +5,7 @@ using UnityEngine;
 public class TrainingManager : MonoBehaviour {
 
     private int numberOfCreatures = 10;
+    private int numberOfParent = 5;
     public GameObject creaturePrefab;
     private List<Creature> creatureList;
     private bool training;
@@ -13,7 +14,7 @@ public class TrainingManager : MonoBehaviour {
     //private float timer;
 
     //Not sure how to determine the layout of the neural net yet
-    private int[] neuralNetLayout = { 8, 8, 8, 8, 8, 8 };
+    private int[] neuralNetLayout = { 8, 16, 10, 8 };
 
     GeneticAlgorithm ga;
 
@@ -46,18 +47,13 @@ public class TrainingManager : MonoBehaviour {
         training = false;
         for(int i = 0; i< numberOfCreatures; i++)
         {
+            creatureList[i].calculateFitness();
             ga.population[i].setFitness(creatureList[i].getFitness());
         }
     }
 
     public void prepNextGeneration()
     {
-        /*
-        for(int i = 0; i < creatureList.Count; i++)
-        {
-            GameObject.Destroy(creatureList[i].gameObject);
-        }
-        */
         if(creatureList != null)
         {
             for (int i = 0; i < creatureList.Count; i++)
@@ -68,7 +64,7 @@ public class TrainingManager : MonoBehaviour {
 
         if(ga.generatation > 0)
         {
-            ga.replaceOldParentWithNew(5);
+            ga.replaceOldParentWithNew(numberOfParent);
         }
 
         ga.mutatePopulation();

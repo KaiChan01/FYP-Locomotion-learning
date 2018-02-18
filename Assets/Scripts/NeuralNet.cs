@@ -160,15 +160,15 @@ public class NeuralNet {
 
     public void mutate()
     {
-        for(int layer = 0; layer < nnStructure.Length-1; layer++)
+        for(int layer = 0; layer < weights.Length; layer++)
         {
-            for(int neuron = 0; neuron < nnStructure[layer]; neuron++)
+            for(int neuron = 0; neuron < weights[layer].Length; neuron++)
             {
-                for(int weight = 0; weight< weights[layer][neuron].Length; weight++)
+                for(int weight = 0; weight < weights[layer][neuron].Length; weight++)
                 {
                     float mutatedWeight = weights[layer][neuron][weight];
 
-                    int randomValue = UnityEngine.Random.Range(0, 1000);
+                    int randomValue = UnityEngine.Random.Range(0, 100);
 
                     if(randomValue <= 2)
                     {
