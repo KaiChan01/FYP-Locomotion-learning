@@ -855,14 +855,14 @@ HingeJoint:
   m_UseLimits: 1
   m_Limits:
     min: 0
-    max: 90
+    max: 45
     bounciness: 0
     bounceMinVelocity: 0
     contactDistance: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
 --- !u!59 &59347464176795386
 HingeJoint:
   m_ObjectHideFlags: 1
@@ -887,14 +887,14 @@ HingeJoint:
   m_UseLimits: 1
   m_Limits:
     min: 0
-    max: 90
+    max: 45
     bounciness: 0
     bounceMinVelocity: 0
     contactDistance: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
 --- !u!59 &59562123348309152
 HingeJoint:
   m_ObjectHideFlags: 1
@@ -919,14 +919,14 @@ HingeJoint:
   m_UseLimits: 1
   m_Limits:
     min: 0
-    max: 90
+    max: 45
     bounciness: 0
     bounceMinVelocity: 0
     contactDistance: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
 --- !u!59 &59644209029529852
 HingeJoint:
   m_ObjectHideFlags: 1
@@ -950,15 +950,15 @@ HingeJoint:
     freeSpin: 0
   m_UseLimits: 1
   m_Limits:
-    min: -90
-    max: 90
+    min: -45
+    max: 45
     bounciness: 0
     bounceMinVelocity: 0
     contactDistance: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
 --- !u!59 &59729198687675158
 HingeJoint:
   m_ObjectHideFlags: 1
@@ -983,14 +983,14 @@ HingeJoint:
   m_UseLimits: 1
   m_Limits:
     min: 0
-    max: 90
+    max: 45
     bounciness: 0
     bounceMinVelocity: 0
     contactDistance: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
 --- !u!59 &59743191628827952
 HingeJoint:
   m_ObjectHideFlags: 1
@@ -1014,15 +1014,15 @@ HingeJoint:
     freeSpin: 0
   m_UseLimits: 1
   m_Limits:
-    min: -90
-    max: 90
+    min: -45
+    max: 45
     bounciness: 0
     bounceMinVelocity: 0
     contactDistance: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
 --- !u!59 &59864145275528576
 HingeJoint:
   m_ObjectHideFlags: 1
@@ -1046,15 +1046,15 @@ HingeJoint:
     freeSpin: 0
   m_UseLimits: 1
   m_Limits:
-    min: -90
-    max: 90
+    min: -45
+    max: 45
     bounciness: 0
     bounceMinVelocity: 0
     contactDistance: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
 --- !u!59 &59984072245676140
 HingeJoint:
   m_ObjectHideFlags: 1
@@ -1078,15 +1078,15 @@ HingeJoint:
     freeSpin: 0
   m_UseLimits: 1
   m_Limits:
-    min: -90
-    max: 90
+    min: -45
+    max: 45
     bounciness: 0
     bounceMinVelocity: 0
     contactDistance: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
 --- !u!65 &65997210683658144
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -1110,6 +1110,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cef95e9b9178b643b70f2fc078242ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  body: {fileID: 1100265703133214}
+  frontLeftT: {fileID: 1426800215911542}
+  frontRightT: {fileID: 1781366069934522}
+  frontLeftL: {fileID: 1834315638347348}
+  frontRightL: {fileID: 1396458302578206}
+  backLeftT: {fileID: 1045618570874180}
+  backRightT: {fileID: 1660761367703364}
+  backLeftL: {fileID: 1071673889110676}
+  backRightL: {fileID: 1654625606837794}
 --- !u!136 &136290846824743402
 CapsuleCollider:
   m_ObjectHideFlags: 1

@@ -1,10 +1,12 @@
 fileFormatVersion: 2
 guid: 6855bd98dd185b54db2c69e4379b643b
-timeCreated: 1514071835
+timeCreated: 1519081356
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - creaturePrefab: {instanceID: 0}
+  - fitnessDisplay: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

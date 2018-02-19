@@ -112,13 +112,25 @@ public class GeneticAlgorithm
         //Top parents are sure to be in the new population
         for (int i = 0; i < parentIndexArray.Length; i++)
         {
-            newPopulation[i] = new NeuralNet(population[i]);
+            newPopulation[i] = new NeuralNet(population[parentIndexArray[i]]);
         }
+        
 
+        //Used to test the code 
+        /*
+        for (int i = 0; i < populationSize; i++)
+        {
+            Debug.Log(population[parentIndex[0]].getFitness());
+            newPopulation[i] = new NeuralNet(population[parentIndexArray[0]]);
+        }
+        */
+
+        
         for (int i = parentIndexArray.Length; i < populationSize; i++)
         {
             newPopulation[i] = new NeuralNet(population[UnityEngine.Random.Range(0, parentIndexArray.Length - 1)]);
         }
+        
 
         population = newPopulation;
     }

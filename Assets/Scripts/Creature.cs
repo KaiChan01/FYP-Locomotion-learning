@@ -58,7 +58,10 @@ public class Creature : MonoBehaviour {
 
             mapOutputsToInstruction(outputs);
         }
-	}
+
+        calculateFitness();
+
+    }
 
     /*
     public void resetPosition()
@@ -83,9 +86,11 @@ public class Creature : MonoBehaviour {
 
     public void calculateFitness()
     {
-        Vector3 newPosition = this.transform.Find("Body").gameObject.transform.position;
-        fitness = Vector3.Distance(creatureStartPosition, new Vector3(body.transform.position.x, body.transform.position.y, body.transform.position.z));
-        Debug.Log(fitness);
+        //fitness += 10;
+        //fitness += (body.GetComponent<Rigidbody>().velocity.y);
+        fitness = Vector3.Distance(creatureStartPosition, body.transform.position);
+        brain.setFitness(fitness);
+        //Debug.Log(fitness);
     }
 
     public float getFitness()
