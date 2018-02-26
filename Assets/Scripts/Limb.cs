@@ -8,7 +8,6 @@ public class Limb {
     HingeJoint bodyConnection;
     HingeJoint lowerLegConnection;
 
-    /* THIS SHOULD BE DIFFERENT FOR THE BACK LEGS */
     float force = 100;
 
     public Limb(GameObject thigh, GameObject body)

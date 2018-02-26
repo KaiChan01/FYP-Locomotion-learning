@@ -168,7 +168,7 @@ public class NeuralNet {
                 {
                     float mutatedWeight = weights[layer][neuron][weight];
 
-                    int randomValue = UnityEngine.Random.Range(0, 100);
+                    int randomValue = UnityEngine.Random.Range(0, 10000);
 
                     if(randomValue <= 2)
                     {

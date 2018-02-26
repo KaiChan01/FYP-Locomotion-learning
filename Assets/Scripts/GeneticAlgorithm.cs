@@ -115,20 +115,10 @@ public class GeneticAlgorithm
             newPopulation[i] = new NeuralNet(population[parentIndexArray[i]]);
         }
         
-
-        //Used to test the code 
-        /*
-        for (int i = 0; i < populationSize; i++)
-        {
-            Debug.Log(population[parentIndex[0]].getFitness());
-            newPopulation[i] = new NeuralNet(population[parentIndexArray[0]]);
-        }
-        */
-
-        
         for (int i = parentIndexArray.Length; i < populationSize; i++)
         {
-            newPopulation[i] = new NeuralNet(population[UnityEngine.Random.Range(0, parentIndexArray.Length - 1)]);
+            //alternate between the best parents
+            newPopulation[i] = new NeuralNet(newPopulation[(i - parentIndexArray.Length) % parentIndexArray.Length]);
         }
         
 
@@ -137,7 +127,8 @@ public class GeneticAlgorithm
 
     public void mutatePopulation()
     {
-        for(int i = 0; i < populationSize; i++)
+        //We do not mutate the top parents, this way they're consistant
+        for (int i = 2; i < populationSize; i++)
         {
             population[i].mutate();
         }

@@ -22,6 +22,7 @@ public class Creature : MonoBehaviour {
 
     private NeuralNet brain = null;
     private Vector3 creatureStartPosition;
+    private Vector3 target;
     private float fitness;
     private bool brainAssigned;
     private bool finishedInit = false;
@@ -37,6 +38,7 @@ public class Creature : MonoBehaviour {
 
         //The body's position will calculate the fitness
         this.creatureStartPosition =  new Vector3(body.transform.position.x, body.transform.position.y, body.transform.position.z);
+        this.target = new Vector3(creatureStartPosition.x, creatureStartPosition.y, 100);
 
         //this.training = false;
         fitness = 0;
@@ -86,9 +88,9 @@ public class Creature : MonoBehaviour {
 
     public void calculateFitness()
     {
-        //fitness += 10;
-        //fitness += (body.GetComponent<Rigidbody>().velocity.y);
-        fitness = Vector3.Distance(creatureStartPosition, body.transform.position);
+        //fitness = Vector3.Distance(creatureStartPosition, body.transform.position);
+        //fitness = Vector3.Distance(creatureStartPosition, new Vector3(creatureStartPosition.x, creatureStartPosition.y, body.transform.position.z));
+        fitness = 100 - Vector3.Distance(body.transform.position, target);
         brain.setFitness(fitness);
         //Debug.Log(fitness);
     }

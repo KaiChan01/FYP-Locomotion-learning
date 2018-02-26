@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TrainingManager : MonoBehaviour {
 
     private int numberOfCreatures = 10;
-    private int numberOfParent = 5;
+    private int numberOfParent = 2;
     public GameObject creaturePrefab;
     private List<Creature> creatureList;
     private bool training;
@@ -99,10 +99,9 @@ public class TrainingManager : MonoBehaviour {
 
         for (int i = 0; i < numberOfCreatures; i++)
         {
-            creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(UnityEngine.Random.Range(-50f, 50f), -1.5f, UnityEngine.Random.Range(-50f, 50f)), creaturePrefab.transform.rotation)).GetComponent<Creature>());
+            //creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), creaturePrefab.transform.rotation)).GetComponent<Creature>());
+            creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(-100 + i * 20, -1.5f, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
             creatureList[i].setBrain(ga.population[i]);
-            //creatureList[i].assignedBrain();
-            //Debug.Log(creatureList.brain)
         }
     }
 
