@@ -38,6 +38,51 @@ public class NeuralNet {
         copyWeights(netForCopy.weights);
     }
 
+    public NeuralNet(int[] parentStruct, float[][][] parent1Weights, float[][][] parent2Weights)
+    {
+        this.nnStructure = new int[parentStruct.Length];
+        this.nnStructure = parentStruct;
+
+        //Layout of the neurons initialised
+        initaliseNeurons();
+
+        //Exchange weights from parents
+        List<float[][]> tempWeights = new List<float[][]>();
+
+        for (int i = 1; i < nnStructure.Length; i++)
+        {
+            //Node level
+            List<float[]> layerWeights = new List<float[]>();
+
+            int previousNeurons = nnStructure[i - 1];
+
+            //Weights layer
+            for (int j = 0; j < nnStructure[i]; j++)
+            {
+                float[] weightsConnections = new float[previousNeurons];
+
+                for (int k = 0; k < previousNeurons; k++)
+                {
+                    //Choose from parent
+                   if(Random.Range(0, 2) == 0)
+                    {
+                        weightsConnections[k] = parent1Weights[i][j][k];
+                    }
+                   else
+                    {
+                        weightsConnections[k] = parent2Weights[i][j][k];
+                    }
+                    
+                }
+
+                layerWeights.Add(weightsConnections);
+            }
+            tempWeights.Add(layerWeights.ToArray());
+        }
+
+        weights = tempWeights.ToArray();
+    }
+
     void initaliseNeurons()
     {
         List<float[]> tempNeurons = new List<float[]>();
@@ -82,7 +127,6 @@ public class NeuralNet {
 
         weights = tempWeights.ToArray();
     }
-    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ structure of a basic NN
 
     void copyNeurons(float[][] neurons)
     {
@@ -124,7 +168,6 @@ public class NeuralNet {
     }
 
 
-    //Computation vvvvvvvvvvvvvvvvvvvvvv
     //Forward Feed takes in a set of inputs and returns a set of outputs
     public float[] forwardFeed(float[] inputs)
     {
@@ -157,7 +200,6 @@ public class NeuralNet {
     }
 
     //Should look into ReLU as an activation function
-
     public void mutate(int mutationRate)
     {
         for(int layer = 0; layer < weights.Length; layer++)
@@ -195,8 +237,8 @@ public class NeuralNet {
 
     public NeuralNet crossOver(NeuralNet partnerNeuralNet)
     {
-        //Might implement this in the future
-        return null;
+        NeuralNet offSpring = new NeuralNet(nnStructure, this.weights, partnerNeuralNet.weights);
+        return offSpring;
     }
 
     public float getFitness()

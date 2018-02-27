@@ -9,7 +9,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-public class GeneticAlgorithm
+public class GeneticAlgorithm : MonoBehaviour
 {
 
     public float fitness { get; private set; }
@@ -17,6 +17,7 @@ public class GeneticAlgorithm
     public int generatation { get; private set; }
     public NeuralNet[] population { get; private set; }
     public int mutationRate;
+    public int genTestPeriod;
 
     private float fitnessSum;
     private int[] neuralStructure;
@@ -29,7 +30,8 @@ public class GeneticAlgorithm
         this.neuralStructure = neuralStructure;
         population = new NeuralNet[populationSize];
 
-        mutationRate = 100;
+        mutationRate = 50;
+        genTestPeriod = 20;
     }
 
     public void populate()
@@ -131,13 +133,13 @@ public class GeneticAlgorithm
 
     public void mutatePopulation()
     {
-        if(generatation == 10)
+        if(generatation == genTestPeriod)
         {
             mutationRate = 1000;
         }
         else if(mutationRate >= 1000 && (generatation % 10) == 0)
         {
-            mutationRate += 100;
+            mutationRate += 200;
         }
 
         //We do not mutate the top parents, this way they're consistant
