@@ -112,6 +112,7 @@ public class TrainingManager : MonoBehaviour {
         {
             fitnessDisplay.text = fitnessDisplay.text + "Creature"+i+" fitness:" + ga.population[i].getFitness() + "\n";
         }
+        fitnessDisplay.text = fitnessDisplay.text + "Mutation rate: " + ga.mutationRate + "\n";
     }
 
     public void resetFitnessDisplay()

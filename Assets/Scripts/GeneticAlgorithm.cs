@@ -16,6 +16,7 @@ public class GeneticAlgorithm
     public int populationSize { get; private set; }
     public int generatation { get; private set; }
     public NeuralNet[] population { get; private set; }
+    public int mutationRate;
 
     private float fitnessSum;
     private int[] neuralStructure;
@@ -27,6 +28,8 @@ public class GeneticAlgorithm
         this.populationSize = populationSize;
         this.neuralStructure = neuralStructure;
         population = new NeuralNet[populationSize];
+
+        mutationRate = 100;
     }
 
     public void populate()
@@ -47,8 +50,8 @@ public class GeneticAlgorithm
             NeuralNet child1 = parent1.crossOver(parent2);
             NeuralNet child2 = parent2.crossOver(parent1);
 
-            child1.mutate();
-            child2.mutate();
+            child1.mutate(mutationRate);
+            child2.mutate(mutationRate);
 
             newGeneration[i * 2] = child1;
             newGeneration[(i * 2) + 1] = child2;
@@ -113,6 +116,7 @@ public class GeneticAlgorithm
         for (int i = 0; i < parentIndexArray.Length; i++)
         {
             newPopulation[i] = new NeuralNet(population[parentIndexArray[i]]);
+            Debug.Log(i);
         }
         
         for (int i = parentIndexArray.Length; i < populationSize; i++)
@@ -127,10 +131,19 @@ public class GeneticAlgorithm
 
     public void mutatePopulation()
     {
+        if(generatation == 10)
+        {
+            mutationRate = 1000;
+        }
+        else if(mutationRate >= 1000 && (generatation % 10) == 0)
+        {
+            mutationRate += 100;
+        }
+
         //We do not mutate the top parents, this way they're consistant
         for (int i = 2; i < populationSize; i++)
         {
-            population[i].mutate();
+            population[i].mutate(mutationRate);
         }
     }
 

@@ -158,7 +158,7 @@ public class NeuralNet {
 
     //Should look into ReLU as an activation function
 
-    public void mutate()
+    public void mutate(int mutationRate)
     {
         for(int layer = 0; layer < weights.Length; layer++)
         {
@@ -168,7 +168,7 @@ public class NeuralNet {
                 {
                     float mutatedWeight = weights[layer][neuron][weight];
 
-                    int randomValue = UnityEngine.Random.Range(0, 10000);
+                    int randomValue = UnityEngine.Random.Range(0, mutationRate);
 
                     if(randomValue <= 2)
                     {
