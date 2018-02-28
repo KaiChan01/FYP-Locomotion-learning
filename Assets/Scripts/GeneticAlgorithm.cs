@@ -9,7 +9,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-public class GeneticAlgorithm : MonoBehaviour
+public class GeneticAlgorithm
 {
 
     public float fitness { get; private set; }
@@ -18,6 +18,9 @@ public class GeneticAlgorithm : MonoBehaviour
     public NeuralNet[] population { get; private set; }
     public int mutationRate;
     public int genTestPeriod;
+
+    public int runLimit;
+    public float highestFromGeneration;
 
     private float fitnessSum;
     private int[] neuralStructure;
@@ -30,8 +33,10 @@ public class GeneticAlgorithm : MonoBehaviour
         this.neuralStructure = neuralStructure;
         population = new NeuralNet[populationSize];
 
-        mutationRate = 50;
-        genTestPeriod = 20;
+        mutationRate = 100;
+        genTestPeriod = 10;
+
+        runLimit = 100;
     }
 
     public void populate()
@@ -59,7 +64,7 @@ public class GeneticAlgorithm : MonoBehaviour
             newGeneration[(i * 2) + 1] = child2;
         }
         population = newGeneration;
-        generatation++;
+        incrementGeneration();
     }
 
     //Need to choose the best parents
@@ -92,20 +97,32 @@ public class GeneticAlgorithm : MonoBehaviour
 
     public void replaceOldParentWithNew(int numOfParentsWanted)
     {
+        //List to store the index of the fittest parents
         List<int> parentIndex = new List<int>();
 
         for (int j = 0; j < numOfParentsWanted; j++)
         {
-            float highestFitness = 0;
+            float highestFitness = -100000;
+
+            //TODO
+            //The BUG happens here, when the fit creature's performance isn't consistant
             int highestIndex = -1;
+
             for (int i = 0; i < populationSize; i++)
             {
+                //If the creature's fitness is new highest and isn't already in array
                 if (highestFitness <= population[i].getFitness() && parentIndex.IndexOf(i) == -1)
                 {
                     highestFitness = population[i].getFitness();
                     highestIndex = i;
                 }
                 //This way the better ones will more likely be choosen first
+
+                //We will save the highest from this generation
+                if (i == 0)
+                {
+                    highestFromGeneration = population[i].getFitness();
+                }
             }
             parentIndex.Add(highestIndex);
         }
@@ -118,15 +135,36 @@ public class GeneticAlgorithm : MonoBehaviour
         for (int i = 0; i < parentIndexArray.Length; i++)
         {
             newPopulation[i] = new NeuralNet(population[parentIndexArray[i]]);
-            Debug.Log(i);
         }
         
         for (int i = parentIndexArray.Length; i < populationSize; i++)
         {
-            //alternate between the best parents
-            newPopulation[i] = new NeuralNet(newPopulation[(i - parentIndexArray.Length) % parentIndexArray.Length]);
+            //Copy best parents
+            int ranParent = UnityEngine.Random.Range(0, numOfParentsWanted);
+            newPopulation[i] = new NeuralNet(newPopulation[ranParent]);
         }
-        
+        population = newPopulation;
+    }
+
+    public void showcaseBestParent()
+    {
+        NeuralNet[] newPopulation = new NeuralNet[populationSize];
+        float highestFitness = 0;
+        int fittestIndex = -1;
+
+        for (int i = 0; i < populationSize; i++)
+        {
+            if (highestFitness <= population[i].getFitness())
+            {
+                highestFitness = population[i].getFitness();
+                 fittestIndex = i;
+            }
+        }
+
+        for (int i = 0; i < populationSize; i++)
+        {
+            newPopulation[i] = new NeuralNet(population[fittestIndex]);
+        }
 
         population = newPopulation;
     }
@@ -142,10 +180,13 @@ public class GeneticAlgorithm : MonoBehaviour
             mutationRate += 200;
         }
 
-        //We do not mutate the top parents, this way they're consistant
-        for (int i = 2; i < populationSize; i++)
+        if (generatation != runLimit)
         {
-            population[i].mutate(mutationRate);
+            //We do not mutate the top parents, this way they're consistant
+            for (int i = 2; i < populationSize; i++)
+            {
+                population[i].mutate(mutationRate);
+            }
         }
     }
 

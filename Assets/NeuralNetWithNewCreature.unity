@@ -392,6 +392,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6855bd98dd185b54db2c69e4379b643b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numberOfCreatures: 20
+  numberOfParent: 2
   creaturePrefab: {fileID: 1945076337345088, guid: e95041916f522b64b8b836f0bb99fe59,
     type: 2}
   fitnessDisplay: {fileID: 166632393}

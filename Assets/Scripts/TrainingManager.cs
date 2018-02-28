@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class TrainingManager : MonoBehaviour {
 
-    private int numberOfCreatures = 10;
-    private int numberOfParent = 2;
+    public int numberOfCreatures;
+    public int numberOfParent;
     public GameObject creaturePrefab;
     private List<Creature> creatureList;
     private bool training;
@@ -17,7 +17,7 @@ public class TrainingManager : MonoBehaviour {
     //private float timer;
 
     //Not sure how to determine the layout of the neural net yet
-    private int[] neuralNetLayout = { 8, 16, 16, 16, 16, 16,16, 8 };
+    private int[] neuralNetLayout = { 8, 30, 30, 30, 30, 30, 30, 8 };
 
     GeneticAlgorithm ga;
 
@@ -57,8 +57,11 @@ public class TrainingManager : MonoBehaviour {
             training = true;
             Debug.Log(ga.generatation);
             //timer = setTrainingTime;
-            Invoke("stopTraining", 10);
-            resetFitnessDisplay();
+            if (ga.generatation < ga.runLimit)
+            {
+                Invoke("stopTraining", 10);
+                resetFitnessDisplay();
+            }
         }
 	}
 
@@ -86,9 +89,17 @@ public class TrainingManager : MonoBehaviour {
         {
             ga.replaceOldParentWithNew(numberOfParent);
         }
+        else if (ga.generatation == ga.runLimit)
+        {
+            ga.showcaseBestParent();
+        }
 
         ga.mutatePopulation();
-        ga.incrementGeneration();
+
+        if (ga.generatation != ga.runLimit)
+        {
+            ga.incrementGeneration();
+        }
 
         putNewCreaturesInScene();
     }
@@ -100,8 +111,9 @@ public class TrainingManager : MonoBehaviour {
         for (int i = 0; i < numberOfCreatures; i++)
         {
             //creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), creaturePrefab.transform.rotation)).GetComponent<Creature>());
-            creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(-100 + i * 20, -1.5f, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
+            creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(-(numberOfCreatures * 10) + i * 20, -1.5f, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
             creatureList[i].setBrain(ga.population[i]);
+            //creatureList[i].creatureName = i.ToString();
         }
     }
 
@@ -110,9 +122,10 @@ public class TrainingManager : MonoBehaviour {
         resetFitnessDisplay();
         for (int i = 0; i < numberOfCreatures; i++)
         {
-            fitnessDisplay.text = fitnessDisplay.text + "Creature"+i+" fitness:" + ga.population[i].getFitness() + "\n";
+            fitnessDisplay.text = fitnessDisplay.text + "Creature"+ i +" fitness:" + ga.population[i].getFitness() + "\n";
         }
         fitnessDisplay.text = fitnessDisplay.text + "Mutation rate: " + ga.mutationRate + "\n";
+        fitnessDisplay.text = fitnessDisplay.text + "Fittest from last generation: " + ga.highestFromGeneration + "\n";
     }
 
     public void resetFitnessDisplay()

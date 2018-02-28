@@ -20,15 +20,17 @@ public class Creature : MonoBehaviour {
     public Limb rightLeg { get; private set; }
     public Limb leftLeg { get; private set; }
 
+    private BodyCollision bodycoll;
+
     private NeuralNet brain = null;
-    private Vector3 creatureStartPosition;
-    private Vector3 target;
+    //private Vector3 creatureStartPosition;
+    //private Vector3 target;
     private float fitness;
     private bool brainAssigned;
     private bool finishedInit = false;
 
+    private Rigidbody bodyRB;
 
-    // Use this for initialization
     void Start () {
 
         rightArm = new Limb(frontRightT, body);
@@ -37,12 +39,15 @@ public class Creature : MonoBehaviour {
         leftLeg = new Limb(backLeftT, body);
 
         //The body's position will calculate the fitness
-        this.creatureStartPosition =  new Vector3(body.transform.position.x, body.transform.position.y, body.transform.position.z);
-        this.target = new Vector3(creatureStartPosition.x, creatureStartPosition.y, 100);
+        //this.creatureStartPosition =  new Vector3(body.transform.position.x, body.transform.position.y, body.transform.position.z);
+        //this.target = new Vector3(creatureStartPosition.x, creatureStartPosition.y, 100);
 
         //this.training = false;
         fitness = 0;
         finishedInit = true;
+        bodycoll = body.GetComponent<BodyCollision>();
+
+        bodyRB = body.GetComponent<Rigidbody>();
     }
 	
 	// Update is called once per frame
@@ -62,17 +67,7 @@ public class Creature : MonoBehaviour {
         }
 
         calculateFitness();
-
     }
-
-    /*
-    public void resetPosition()
-    {
-        this.transform.position = creatureStartTransform.position;
-        this.transform.rotation = creatureStartTransform.rotation;
-        resetFitness();
-    }
-    */
 
     public void mapOutputsToInstruction(float[] outputs)
     {
@@ -88,11 +83,59 @@ public class Creature : MonoBehaviour {
 
     public void calculateFitness()
     {
+        /*
         //fitness = Vector3.Distance(creatureStartPosition, body.transform.position);
         //fitness = Vector3.Distance(creatureStartPosition, new Vector3(creatureStartPosition.x, creatureStartPosition.y, body.transform.position.z));
         fitness = 100 - Vector3.Distance(body.transform.position, target);
         brain.setFitness(fitness);
         //Debug.Log(fitness);
+        */
+
+        //Going for a different approach to generating fitness, rewards and penalties.
+        if (bodycoll.isTouchingGround())
+        {
+            //this.fitness = this.fitness + 1;
+        }
+        else
+        {
+            this.fitness -= 5;
+        }
+
+        if(body.transform.position.y >= 0.2)
+        {
+            this.fitness += 1;
+        }
+        else
+        {
+            this.fitness -= 5;
+        }
+
+        if(body.transform.rotation.x < -0.1 || body.transform.rotation.x > 0.1 || body.transform.rotation.z > 0.1 || body.transform.rotation.z < -0.1)
+        {
+            this.fitness -= 5;
+        }
+        else
+        {
+            this.fitness += 3;
+        }
+
+        /*
+        if(bodyRB.velocity.z > 0)
+        {
+            this.fitness += 10 * bodyRB.velocity.z;
+        }
+        else
+        {
+            this.fitness -= 2;
+        }
+
+        if (bodyRB.velocity.x > 0.5 || bodyRB.velocity.x < -0.5)
+        {
+            this.fitness -= 2;
+        }
+        */
+
+        brain.setFitness(fitness);
     }
 
     public float getFitness()
@@ -100,24 +143,9 @@ public class Creature : MonoBehaviour {
         return fitness;
     }
 
-    /*
-    public void resetFitness()
-    {
-        fitness = 0;
-    }
-    */
-
     public void setBrain(NeuralNet newBrain)
     {
         brain = newBrain;
     }
 
-    /*
-    public void assignedBrain()
-    {
-        brainAssigned = true;
-        Debug.Log("run");
-        Debug.Log(brainAssigned);
-    }
-    */
 }

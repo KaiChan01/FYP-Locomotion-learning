@@ -8,7 +8,7 @@ public class Limb {
     HingeJoint bodyConnection;
     HingeJoint lowerLegConnection;
 
-    float force = 100;
+    float force = 10;
 
     public Limb(GameObject thigh, GameObject body)
     {
@@ -49,7 +49,7 @@ public class Limb {
     public void addForceToLegHinge(float targetVelocity)
     {
         JointMotor motor = lowerLegConnection.motor;
-        motor.targetVelocity = targetVelocity * 500;
+        motor.targetVelocity = targetVelocity * 100;
         motor.force = force;
         lowerLegConnection.motor = motor;
         lowerLegConnection.useMotor = true;
