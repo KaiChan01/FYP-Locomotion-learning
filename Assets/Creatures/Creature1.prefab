@@ -1120,7 +1120,6 @@ MonoBehaviour:
   backRightT: {fileID: 1660761367703364}
   backLeftL: {fileID: 1071673889110676}
   backRightL: {fileID: 1654625606837794}
-  bodyIsTouchingFloor: 0
 --- !u!114 &114534945771454730
 MonoBehaviour:
   m_ObjectHideFlags: 1

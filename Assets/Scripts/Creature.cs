@@ -89,51 +89,40 @@ public class Creature : MonoBehaviour {
         fitness = 100 - Vector3.Distance(body.transform.position, target);
         brain.setFitness(fitness);
         //Debug.Log(fitness);
-        */
 
         //Going for a different approach to generating fitness, rewards and penalties.
         if (bodycoll.isTouchingGround())
         {
-            //this.fitness = this.fitness + 1;
+            this.fitness = this.fitness - 1;
         }
         else
         {
-            this.fitness -= 5;
-        }
-
-        if(body.transform.position.y >= 0.2)
-        {
-            this.fitness += 1;
-        }
-        else
-        {
-            this.fitness -= 5;
-        }
-
-        if(body.transform.rotation.x < -0.1 || body.transform.rotation.x > 0.1 || body.transform.rotation.z > 0.1 || body.transform.rotation.z < -0.1)
-        {
-            this.fitness -= 5;
-        }
-        else
-        {
-            this.fitness += 3;
-        }
-
-        /*
-        if(bodyRB.velocity.z > 0)
-        {
-            this.fitness += 10 * bodyRB.velocity.z;
-        }
-        else
-        {
-            this.fitness -= 2;
-        }
-
-        if (bodyRB.velocity.x > 0.5 || bodyRB.velocity.x < -0.5)
-        {
-            this.fitness -= 2;
+            this.fitness += 2;
         }
         */
+
+        if(body.transform.rotation.x < -0.1 || body.transform.rotation.x > 0.1 || body.transform.rotation.z > 0.1|| body.transform.rotation.z < -0.1 || body.transform.rotation.y > 0.1 || body.transform.rotation.y < -0.1)
+        {
+            this.fitness -= 0.5f;
+        }
+
+        float movingSpeed = bodyRB.velocity.z * 10;
+        this.fitness += movingSpeed;
+
+        if(movingSpeed <1)
+        {
+            this.fitness -= 1;
+        }
+
+
+        if (body.transform.position.y <= 2)
+        {
+            this.fitness -= 0.2f;
+        }
+        else
+        {
+            this.fitness += body.transform.position.y;
+        }
 
         brain.setFitness(fitness);
     }

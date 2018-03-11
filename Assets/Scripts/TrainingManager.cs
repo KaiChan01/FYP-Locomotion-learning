@@ -10,21 +10,19 @@ public class TrainingManager : MonoBehaviour {
     public GameObject creaturePrefab;
     private List<Creature> creatureList;
     private bool training;
-
     public Text fitnessDisplay;
-
-    //private int setTrainingTime = 10;
-    //private float timer;
+    public int trainingTime;
+    public int runLimit;
 
     //Not sure how to determine the layout of the neural net yet
-    private int[] neuralNetLayout = { 8, 30, 30, 30, 30, 30, 30, 8 };
+    private int[] neuralNetLayout = { 8, 64, 64, 8 };
 
     GeneticAlgorithm ga;
 
 	// Use this for initialization
 	void Start () {
         training = false;
-        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout);
+        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, runLimit);
         ga.populate();
     }
 	
@@ -56,10 +54,9 @@ public class TrainingManager : MonoBehaviour {
             prepNextGeneration();
             training = true;
             Debug.Log(ga.generatation);
-            //timer = setTrainingTime;
             if (ga.generatation < ga.runLimit)
             {
-                Invoke("stopTraining", 10);
+                Invoke("stopTraining", trainingTime);
                 resetFitnessDisplay();
             }
         }
@@ -85,9 +82,10 @@ public class TrainingManager : MonoBehaviour {
             }
         }
 
-        if(ga.generatation > 0)
+        if(ga.generatation > -1)
         {
             ga.replaceOldParentWithNew(numberOfParent);
+            //ga.breedNewGeneration(numberOfParent);
         }
         else if (ga.generatation == ga.runLimit)
         {
@@ -96,12 +94,9 @@ public class TrainingManager : MonoBehaviour {
 
         ga.mutatePopulation();
 
-        if (ga.generatation != ga.runLimit)
-        {
-            ga.incrementGeneration();
-        }
-
         putNewCreaturesInScene();
+
+        ga.incrementGeneration();
     }
 
     public void putNewCreaturesInScene()
@@ -110,10 +105,8 @@ public class TrainingManager : MonoBehaviour {
 
         for (int i = 0; i < numberOfCreatures; i++)
         {
-            //creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(UnityEngine.Random.Range(-50f, 50f), UnityEngine.Random.Range(-50f, 50f)), creaturePrefab.transform.rotation)).GetComponent<Creature>());
             creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(-(numberOfCreatures * 10) + i * 20, -1.5f, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
             creatureList[i].setBrain(ga.population[i]);
-            //creatureList[i].creatureName = i.ToString();
         }
     }
 

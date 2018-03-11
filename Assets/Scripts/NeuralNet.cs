@@ -7,9 +7,9 @@ public class NeuralNet {
 
     /*
      * A neural net must have
-     * 1. Inputs (8 inputs the joints)
+     * 1. Inputs (creature Status)
      * 2. hidden layers
-     * 3. Outputs (8 outputs the joints)
+     * 3. Outputs (creature actions)
      */
 
     //list of float[] represent the layers and neurons
@@ -66,11 +66,11 @@ public class NeuralNet {
                     //Choose from parent
                    if(Random.Range(0, 2) == 0)
                     {
-                        weightsConnections[k] = parent1Weights[i][j][k];
+                        weightsConnections[k] = parent1Weights[i-1][j][k];
                     }
                    else
                     {
-                        weightsConnections[k] = parent2Weights[i][j][k];
+                        weightsConnections[k] = parent2Weights[i-1][j][k];
                     }
                     
                 }
@@ -189,10 +189,10 @@ public class NeuralNet {
                 //for every previous neuron that's connected to the current neuron
                 for (int prevNeuronIndex = 0; prevNeuronIndex < nnStructure[i-1]; prevNeuronIndex++)
                 {
-                    totalWeight += weights[i-1][neuronIndex][prevNeuronIndex];
+                    totalWeight += weights[i-1][neuronIndex][prevNeuronIndex] * neurons[i-1][prevNeuronIndex];
                 }
 
-                neurons[i][neuronIndex] = (float)System.Math.Tanh(totalWeight);
+                neurons[i][neuronIndex] = (float) System.Math.Tanh(totalWeight);
             }
         }
 
@@ -218,15 +218,15 @@ public class NeuralNet {
                     }
                     else if(randomValue <= 4)
                     {
-                        mutatedWeight = UnityEngine.Random.Range(-1, 1);
+                        mutatedWeight = UnityEngine.Random.Range(-0.5f, 0.5f);
                     }
                     else if (randomValue <= 6)
                     {
-                        mutatedWeight += mutatedWeight * UnityEngine.Random.Range(0, 1);
+                        mutatedWeight += mutatedWeight * (UnityEngine.Random.Range(0f, 1f) + 1f);
                     }
                     else if (randomValue <= 8)
                     {
-                        mutatedWeight -= mutatedWeight * UnityEngine.Random.Range(0, 1);
+                        mutatedWeight = mutatedWeight * UnityEngine.Random.Range(0, 1);
                     }
 
                     weights[layer][neuron][weight] = mutatedWeight;

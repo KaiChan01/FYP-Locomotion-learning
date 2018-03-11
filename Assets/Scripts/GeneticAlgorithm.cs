@@ -17,7 +17,6 @@ public class GeneticAlgorithm
     public int generatation { get; private set; }
     public NeuralNet[] population { get; private set; }
     public int mutationRate;
-    public int genTestPeriod;
 
     public int runLimit;
     public float highestFromGeneration;
@@ -26,17 +25,18 @@ public class GeneticAlgorithm
     private int[] neuralStructure;
 
     //Create population and size
-    public GeneticAlgorithm(int populationSize, int[] neuralStructure)
+    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int runLimit)
     {
         this.generatation = 0;
         this.populationSize = populationSize;
         this.neuralStructure = neuralStructure;
+        this.runLimit = runLimit;
         population = new NeuralNet[populationSize];
+        populate();
+        mutationRate = 1000;
 
-        mutationRate = 100;
-        genTestPeriod = 10;
-
-        runLimit = 100;
+        //Runs for 100 generations
+        runLimit = 1000;
     }
 
     public void populate()
@@ -47,13 +47,19 @@ public class GeneticAlgorithm
         }
     }
 
-    public void breedNewGeneration()
+    public void breedNewGeneration(int numOfParentsWanted)
     {
         NeuralNet[] newGeneration = new NeuralNet[populationSize];
+
+        int[] parentIndex = chooseParent(numOfParentsWanted);
+
         for (int i = 0; i < populationSize / 2; i++)
         {
-            NeuralNet parent1 = chooseParent();
-            NeuralNet parent2 = chooseParent();
+            int parent1Index = UnityEngine.Random.Range(0, parentIndex.Length);
+            int parent2Index = UnityEngine.Random.Range(0, parentIndex.Length);
+
+            NeuralNet parent1 = population[parent1Index];
+            NeuralNet parent2 = population[parent2Index];
             NeuralNet child1 = parent1.crossOver(parent2);
             NeuralNet child2 = parent2.crossOver(parent1);
 
@@ -64,38 +70,21 @@ public class GeneticAlgorithm
             newGeneration[(i * 2) + 1] = child2;
         }
         population = newGeneration;
-        incrementGeneration();
     }
 
     //Need to choose the best parents
 
-    public void calculateTotalFitness(float startingDist)
+    public void calculateTotalFitness()
     {
         fitnessSum = 0;
         for (int i = 0; i < populationSize; i++)
         {
-            fitnessSum += startingDist - population[i].getFitness();
+            fitnessSum += population[i].getFitness();
         }
     }
 
     //This needs to be changed
-    public NeuralNet chooseParent()
-    {
-        //Set a random varible to find the the best parents first
-        double fitnessLevel = UnityEngine.Random.Range(0,1) * fitnessSum;
-        for (int i = 0; i < populationSize; i++)
-        {
-            if (fitnessLevel >= population[i].getFitness())
-            {
-                return population[i];
-            }
-            //This way the better ones will more likely be choosen first
-            fitnessLevel += population[i].getFitness();
-        }
-        return null;
-    }
-
-    public void replaceOldParentWithNew(int numOfParentsWanted)
+    public int[] chooseParent(int numOfParentsWanted)
     {
         //List to store the index of the fittest parents
         List<int> parentIndex = new List<int>();
@@ -119,15 +108,22 @@ public class GeneticAlgorithm
                 //This way the better ones will more likely be choosen first
 
                 //We will save the highest from this generation
-                if (i == 0)
-                {
-                    highestFromGeneration = population[i].getFitness();
-                }
+
             }
             parentIndex.Add(highestIndex);
+            if (j == 0)
+            {
+                highestFromGeneration = population[parentIndex[0]].getFitness();
+            }
         }
 
-        int[] parentIndexArray = parentIndex.ToArray();
+        return parentIndex.ToArray();
+    }
+
+    public void replaceOldParentWithNew(int numOfParentsWanted)
+    {
+
+        int[] parentIndexArray = chooseParent(numOfParentsWanted);
 
         NeuralNet[] newPopulation = new NeuralNet[populationSize];
 
@@ -171,22 +167,9 @@ public class GeneticAlgorithm
 
     public void mutatePopulation()
     {
-        if(generatation == genTestPeriod)
+        for (int i = 2; i < populationSize; i++)
         {
-            mutationRate = 1000;
-        }
-        else if(mutationRate >= 1000 && (generatation % 10) == 0)
-        {
-            mutationRate += 200;
-        }
-
-        if (generatation != runLimit)
-        {
-            //We do not mutate the top parents, this way they're consistant
-            for (int i = 2; i < populationSize; i++)
-            {
-                population[i].mutate(mutationRate);
-            }
+            population[i].mutate(mutationRate);
         }
     }
 

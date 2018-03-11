@@ -40,7 +40,7 @@ public class Limb {
     public void addForceToBodyHinge(float targetVelocity)
     {
         JointMotor motor = bodyConnection.motor;
-        motor.targetVelocity = targetVelocity * 500;
+        motor.targetVelocity = targetVelocity * 300;
         motor.force = force;
         bodyConnection.motor = motor;
         bodyConnection.useMotor = true;
@@ -49,7 +49,7 @@ public class Limb {
     public void addForceToLegHinge(float targetVelocity)
     {
         JointMotor motor = lowerLegConnection.motor;
-        motor.targetVelocity = targetVelocity * 100;
+        motor.targetVelocity = targetVelocity * 300;
         motor.force = force;
         lowerLegConnection.motor = motor;
         lowerLegConnection.useMotor = true;
