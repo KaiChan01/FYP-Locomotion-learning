@@ -194,6 +194,7 @@ GameObject:
   - component: {fileID: 475500892}
   - component: {fileID: 475500891}
   - component: {fileID: 475500890}
+  - component: {fileID: 475500895}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -271,6 +272,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &475500895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 475500889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e250d61af7c5cdc49a2ff22256dad477, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 0}
 --- !u!1 &867804081
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,12 +406,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numberOfCreatures: 20
-  numberOfParent: 4
+  numberOfParent: 2
   creaturePrefab: {fileID: 1945076337345088, guid: e95041916f522b64b8b836f0bb99fe59,
     type: 2}
   fitnessDisplay: {fileID: 166632393}
   trainingTime: 20
   runLimit: 2000
+  randomPhase: 20
+  mutationRate: 1000
 --- !u!4 &1019187117
 Transform:
   m_ObjectHideFlags: 0

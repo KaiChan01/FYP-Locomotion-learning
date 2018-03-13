@@ -16,30 +16,30 @@ public class GeneticAlgorithm
     public int populationSize { get; private set; }
     public int generatation { get; private set; }
     public NeuralNet[] population { get; private set; }
+    public List<NeuralNet> bestParents = new List<NeuralNet>();
     public int mutationRate;
 
     public int runLimit;
+    public int randomPhase;
     public float highestFromGeneration;
 
     private float fitnessSum;
     private int[] neuralStructure;
 
     //Create population and size
-    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int runLimit)
+    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int runLimit, int randomPhase, int mutationRate)
     {
         this.generatation = 0;
         this.populationSize = populationSize;
         this.neuralStructure = neuralStructure;
         this.runLimit = runLimit;
         population = new NeuralNet[populationSize];
-        populate();
-        mutationRate = 1000;
-
-        //Runs for 100 generations
-        runLimit = 1000;
+        createRandomGeneration();
+        this.mutationRate = mutationRate;
+        this.randomPhase = randomPhase;
     }
 
-    public void populate()
+    public void createRandomGeneration()
     {
         for (int i = 0; i < populationSize; i++)
         {
@@ -51,7 +51,7 @@ public class GeneticAlgorithm
     {
         NeuralNet[] newGeneration = new NeuralNet[populationSize];
 
-        int[] parentIndex = chooseParent(numOfParentsWanted);
+        int[] parentIndex = chooseParents(numOfParentsWanted);
 
         for (int i = 0; i < populationSize / 2; i++)
         {
@@ -84,7 +84,7 @@ public class GeneticAlgorithm
     }
 
     //This needs to be changed
-    public int[] chooseParent(int numOfParentsWanted)
+    public int[] chooseParents(int numOfParentsWanted)
     {
         //List to store the index of the fittest parents
         List<int> parentIndex = new List<int>();
@@ -120,10 +120,29 @@ public class GeneticAlgorithm
         return parentIndex.ToArray();
     }
 
+    public int chooseBestIndividual()
+    {
+        float highestFitness = -100000;
+
+        int highestIndex = -1;
+
+        for (int i = 0; i < populationSize; i++)
+        {
+            //If the creature's fitness is new highest and isn't already in array
+            if (highestFitness <= population[i].getFitness())
+            {
+                highestFitness = population[i].getFitness();
+                highestIndex = i;
+            }
+        }
+        highestFromGeneration = population[highestIndex].getFitness();
+        return highestIndex;
+    }
+
     public void replaceOldParentWithNew(int numOfParentsWanted)
     {
 
-        int[] parentIndexArray = chooseParent(numOfParentsWanted);
+        int[] parentIndexArray = chooseParents(numOfParentsWanted);
 
         NeuralNet[] newPopulation = new NeuralNet[populationSize];
 
@@ -140,6 +159,11 @@ public class GeneticAlgorithm
             newPopulation[i] = new NeuralNet(newPopulation[ranParent]);
         }
         population = newPopulation;
+    }
+
+    public void addBestParent()
+    {
+        bestParents.Add(population[chooseBestIndividual()]);
     }
 
     public void showcaseBestParent()
@@ -165,11 +189,28 @@ public class GeneticAlgorithm
         population = newPopulation;
     }
 
-    public void mutatePopulation()
+    public void testAllInitialBest()
     {
-        for (int i = 2; i < populationSize; i++)
+        NeuralNet[] bestArray = bestParents.ToArray();
+        for(int i = 0; i < bestArray.Length; i++)
         {
-            population[i].mutate(mutationRate);
+            population[i] = bestArray[i];
+        }
+
+        if(bestArray.Length < populationSize)
+        {
+            for(int i = bestArray.Length; i < populationSize; i++)
+            {
+                population[i] = new NeuralNet(neuralStructure);
+            }
+        }
+    }
+
+    public void mutatePopulation(int numParentsChoosen)
+    {
+        for (int i = numParentsChoosen; i < populationSize; i++)
+        {
+                population[i].mutate(mutationRate);
         }
     }
 

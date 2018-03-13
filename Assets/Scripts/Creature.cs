@@ -30,6 +30,8 @@ public class Creature : MonoBehaviour {
     private bool finishedInit = false;
 
     private Rigidbody bodyRB;
+    private TextMesh statusDesc;
+    private string statusString;
 
     void Start () {
 
@@ -38,16 +40,12 @@ public class Creature : MonoBehaviour {
         rightLeg = new Limb(backRightT, body);
         leftLeg = new Limb(backLeftT, body);
 
-        //The body's position will calculate the fitness
-        //this.creatureStartPosition =  new Vector3(body.transform.position.x, body.transform.position.y, body.transform.position.z);
-        //this.target = new Vector3(creatureStartPosition.x, creatureStartPosition.y, 100);
-
         //this.training = false;
         fitness = 0;
         finishedInit = true;
         bodycoll = body.GetComponent<BodyCollision>();
-
         bodyRB = body.GetComponent<Rigidbody>();
+        statusDesc = GetComponent<TextMesh>();
     }
 	
 	// Update is called once per frame
@@ -83,48 +81,63 @@ public class Creature : MonoBehaviour {
 
     public void calculateFitness()
     {
-        /*
-        //fitness = Vector3.Distance(creatureStartPosition, body.transform.position);
-        //fitness = Vector3.Distance(creatureStartPosition, new Vector3(creatureStartPosition.x, creatureStartPosition.y, body.transform.position.z));
-        fitness = 100 - Vector3.Distance(body.transform.position, target);
-        brain.setFitness(fitness);
-        //Debug.Log(fitness);
-
-        //Going for a different approach to generating fitness, rewards and penalties.
         if (bodycoll.isTouchingGround())
-        {
-            this.fitness = this.fitness - 1;
-        }
-        else
-        {
-            this.fitness += 2;
-        }
-        */
-
-        if(body.transform.rotation.x < -0.1 || body.transform.rotation.x > 0.1 || body.transform.rotation.z > 0.1|| body.transform.rotation.z < -0.1 || body.transform.rotation.y > 0.1 || body.transform.rotation.y < -0.1)
-        {
-            this.fitness -= 0.5f;
-        }
-
-        float movingSpeed = bodyRB.velocity.z * 10;
-        this.fitness += movingSpeed;
-
-        if(movingSpeed <1)
         {
             this.fitness -= 1;
         }
+        else
+        {
+            this.fitness += 1;
+        }
 
 
-        if (body.transform.position.y <= 2)
+        statusString = "";
+
+        if (body.transform.rotation.x < -0.2 || body.transform.rotation.x > 0.2 || body.transform.rotation.z > 0.2 || body.transform.rotation.z < - 0.2 || body.transform.rotation.y > 0.2 || body.transform.rotation.y < - 0.2)
+        {
+            this.fitness -= 0.1f;
+            statusString += "Rotation: Not in Range\n";
+        }
+        else
+        {
+            this.fitness += 0.1f;
+            statusString += "Rotation: In Range\n";
+        }
+
+        float movingSpeed = bodyRB.velocity.z * 5;
+        this.fitness += bodyRB.velocity.z;
+
+        if (movingSpeed < 1)
+        {
+            this.fitness -= 1;
+            statusString += "MovingSpeed: Too Slow\n";
+        }
+        else
+        {
+            statusString += "MovingSpeed: Okay\n";
+        }
+
+
+        if (body.transform.position.y <= 0.3)
         {
             this.fitness -= 0.2f;
+            statusString += "Standing: false\n";
         }
         else
         {
             this.fitness += body.transform.position.y;
+            statusString += "Standing: true\n";
         }
 
+        statusString += "Fitness: " + fitness + "\n";
+
+        updateTextMesh();
         brain.setFitness(fitness);
+    }
+
+    private void updateTextMesh()
+    {
+        statusDesc.text = statusString;
     }
 
     public float getFitness()

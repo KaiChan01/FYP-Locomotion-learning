@@ -13,23 +13,26 @@ public class TrainingManager : MonoBehaviour {
     public Text fitnessDisplay;
     public int trainingTime;
     public int runLimit;
+    public int randomPhase;
+    public int mutationRate;
 
     //Not sure how to determine the layout of the neural net yet
-    private int[] neuralNetLayout = { 8, 64, 64, 8 };
+    private int[] neuralNetLayout = { 8, 32, 8 };
+    private string phase;
 
     GeneticAlgorithm ga;
 
 	// Use this for initialization
 	void Start () {
         training = false;
-        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, runLimit);
-        ga.populate();
+        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, runLimit, randomPhase, mutationRate);
+        phase = "Initialising";
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        if (Input.GetKey("down") && Time.timeScale > 0)
+        if (Input.GetKey("right") && Time.timeScale > 0)
         {
 
             Time.timeScale = 10;
@@ -82,20 +85,34 @@ public class TrainingManager : MonoBehaviour {
             }
         }
 
-        if(ga.generatation > -1)
+        if(ga.generatation > randomPhase)
         {
             ga.replaceOldParentWithNew(numberOfParent);
             //ga.breedNewGeneration(numberOfParent);
+
+            ga.mutatePopulation(numberOfParent);
+            phase = "Mutating";
         }
         else if (ga.generatation == ga.runLimit)
         {
             ga.showcaseBestParent();
+            phase = "Showcasing";
+        }
+        else if(ga.generatation > 0)
+        {
+            ga.addBestParent();
+            ga.createRandomGeneration();
+            phase = "Testing Random";
+        }
+        else if(ga.generatation == randomPhase)
+        {
+            ga.testAllInitialBest();
+            phase = "Testing Best From Random";
         }
 
-        ga.mutatePopulation();
+        Debug.Log(phase);
 
         putNewCreaturesInScene();
-
         ga.incrementGeneration();
     }
 
