@@ -98,16 +98,16 @@ public class TrainingManager : MonoBehaviour {
             ga.showcaseBestParent();
             phase = "Showcasing";
         }
+        else if (ga.generatation == randomPhase)
+        {
+            ga.testAllInitialBest();
+            phase = "Testing Best From Random";
+        }
         else if(ga.generatation > 0)
         {
             ga.addBestParent();
             ga.createRandomGeneration();
             phase = "Testing Random";
-        }
-        else if(ga.generatation == randomPhase)
-        {
-            ga.testAllInitialBest();
-            phase = "Testing Best From Random";
         }
 
         Debug.Log(phase);

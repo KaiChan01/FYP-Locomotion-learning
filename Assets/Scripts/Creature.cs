@@ -21,10 +21,8 @@ public class Creature : MonoBehaviour {
     public Limb leftLeg { get; private set; }
 
     private BodyCollision bodycoll;
-
     private NeuralNet brain = null;
-    //private Vector3 creatureStartPosition;
-    //private Vector3 target;
+    private Vector3 previousPosition;
     private float fitness;
     private bool brainAssigned;
     private bool finishedInit = false;
@@ -46,6 +44,7 @@ public class Creature : MonoBehaviour {
         bodycoll = body.GetComponent<BodyCollision>();
         bodyRB = body.GetComponent<Rigidbody>();
         statusDesc = GetComponent<TextMesh>();
+        previousPosition = body.transform.position;
     }
 	
 	// Update is called once per frame
@@ -65,6 +64,7 @@ public class Creature : MonoBehaviour {
         }
 
         calculateFitness();
+        previousPosition = transform.position;
     }
 
     public void mapOutputsToInstruction(float[] outputs)
@@ -81,18 +81,20 @@ public class Creature : MonoBehaviour {
 
     public void calculateFitness()
     {
+        statusString = "";
+
         if (bodycoll.isTouchingGround())
         {
-            this.fitness -= 1;
+            this.fitness -= 0.1f;
+            statusString += "BodyTouchingFloor: True\n";
         }
         else
         {
-            this.fitness += 1;
+            this.fitness += 0.1f;
+            statusString += "BodyTouchingFloor: False\n";
         }
 
-
-        statusString = "";
-
+        /*
         if (body.transform.rotation.x < -0.2 || body.transform.rotation.x > 0.2 || body.transform.rotation.z > 0.2 || body.transform.rotation.z < - 0.2 || body.transform.rotation.y > 0.2 || body.transform.rotation.y < - 0.2)
         {
             this.fitness -= 0.1f;
@@ -103,7 +105,26 @@ public class Creature : MonoBehaviour {
             this.fitness += 0.1f;
             statusString += "Rotation: In Range\n";
         }
+        */
 
+        // Use Euler angles
+        float imbalanceMeasure = 
+            (body.transform.rotation.eulerAngles.x + 
+            body.transform.rotation.eulerAngles.y + 
+            body.transform.rotation.eulerAngles.z) * 0.001f;
+
+        if (imbalanceMeasure < 5)
+        {
+            this.fitness += 1;
+        }
+        else
+        {
+            this.fitness -= imbalanceMeasure;
+        }
+
+        statusString += "ImbalanceLevel: "+ imbalanceMeasure + "\n";
+
+        // Speed, distance
         float movingSpeed = bodyRB.velocity.z * 5;
         this.fitness += bodyRB.velocity.z;
 
@@ -117,8 +138,9 @@ public class Creature : MonoBehaviour {
             statusString += "MovingSpeed: Okay\n";
         }
 
+        //inverse distance
 
-        if (body.transform.position.y <= 0.3)
+        if (body.transform.position.y <= 0.35)
         {
             this.fitness -= 0.2f;
             statusString += "Standing: false\n";

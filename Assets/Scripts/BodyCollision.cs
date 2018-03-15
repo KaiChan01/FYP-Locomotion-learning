@@ -15,13 +15,17 @@ public class BodyCollision : MonoBehaviour {
 
 	}
 
-     void OnCollisionEnter(Collision other)
+    void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.name == "Ground" )
         {
             isTouching = true;
         }
-        else
+    }
+
+    void OnCollisionExit(Collision other)
+    {
+        if (other.gameObject.name == "Ground")
         {
             isTouching = false;
         }
