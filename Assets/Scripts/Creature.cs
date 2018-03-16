@@ -83,9 +83,15 @@ public class Creature : MonoBehaviour {
     {
         statusString = "";
 
+        //Speed and distance
+        float distanceTravelled = Vector3.Distance(previousPosition, body.transform.position);
+        this.fitness += distanceTravelled;
+        statusString += "MovingSpeed: " + distanceTravelled + "\n";
+
+        //Body collision with floor
         if (bodycoll.isTouchingGround())
         {
-            this.fitness -= 0.1f;
+            this.fitness -= 0.5f;
             statusString += "BodyTouchingFloor: True\n";
         }
         else
@@ -94,24 +100,13 @@ public class Creature : MonoBehaviour {
             statusString += "BodyTouchingFloor: False\n";
         }
 
-        /*
-        if (body.transform.rotation.x < -0.2 || body.transform.rotation.x > 0.2 || body.transform.rotation.z > 0.2 || body.transform.rotation.z < - 0.2 || body.transform.rotation.y > 0.2 || body.transform.rotation.y < - 0.2)
-        {
-            this.fitness -= 0.1f;
-            statusString += "Rotation: Not in Range\n";
-        }
-        else
-        {
-            this.fitness += 0.1f;
-            statusString += "Rotation: In Range\n";
-        }
-        */
+        //Balance
+        float angleX = convertAngle(body.transform.rotation.eulerAngles.x);
+        float angleY = convertAngle(body.transform.rotation.eulerAngles.y);
+        float angleZ = convertAngle(body.transform.rotation.eulerAngles.z);
 
         // Use Euler angles
-        float imbalanceMeasure = 
-            (body.transform.rotation.eulerAngles.x + 
-            body.transform.rotation.eulerAngles.y + 
-            body.transform.rotation.eulerAngles.z) * 0.001f;
+        float imbalanceMeasure = (angleX + angleY + angleZ) * 0.1f; ;
 
         if (imbalanceMeasure < 5)
         {
@@ -124,25 +119,12 @@ public class Creature : MonoBehaviour {
 
         statusString += "ImbalanceLevel: "+ imbalanceMeasure + "\n";
 
-        // Speed, distance
-        float movingSpeed = bodyRB.velocity.z * 5;
-        this.fitness += bodyRB.velocity.z;
-
-        if (movingSpeed < 1)
-        {
-            this.fitness -= 1;
-            statusString += "MovingSpeed: Too Slow\n";
-        }
-        else
-        {
-            statusString += "MovingSpeed: Okay\n";
-        }
-
         //inverse distance
 
-        if (body.transform.position.y <= 0.35)
+        //Standing fitness
+        if (body.transform.position.y <= 0.35f)
         {
-            this.fitness -= 0.2f;
+            this.fitness -= 0.3f;
             statusString += "Standing: false\n";
         }
         else
@@ -172,4 +154,14 @@ public class Creature : MonoBehaviour {
         brain = newBrain;
     }
 
+    private float convertAngle(float angle)
+    {
+        float newAngle = angle % 360;
+        if (newAngle > 270)
+        {
+            newAngle = newAngle - 360;
+        }
+
+        return Mathf.Abs(newAngle);
+    }
 }

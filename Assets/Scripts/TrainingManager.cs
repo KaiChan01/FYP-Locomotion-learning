@@ -17,7 +17,7 @@ public class TrainingManager : MonoBehaviour {
     public int mutationRate;
 
     //Not sure how to determine the layout of the neural net yet
-    private int[] neuralNetLayout = { 8, 32, 8 };
+    private int[] neuralNetLayout = { 8, 8, 8, 8, 8, 8 };
     private string phase;
 
     GeneticAlgorithm ga;
