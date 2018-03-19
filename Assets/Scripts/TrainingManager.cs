@@ -15,6 +15,7 @@ public class TrainingManager : MonoBehaviour {
     public int runLimit;
     public int randomPhase;
     public int mutationRate;
+    public float spawnHeight;
 
     //Not sure how to determine the layout of the neural net yet
     private int[] neuralNetLayout = { 8, 8, 8, 8, 8, 8 };
@@ -122,7 +123,7 @@ public class TrainingManager : MonoBehaviour {
 
         for (int i = 0; i < numberOfCreatures; i++)
         {
-            creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(-(numberOfCreatures * 10) + i * 20, -1.5f, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
+            creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(-(numberOfCreatures * 10) + i * 20, spawnHeight, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
             creatureList[i].setBrain(ga.population[i]);
         }
     }

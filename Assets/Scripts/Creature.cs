@@ -4,21 +4,23 @@ using UnityEngine;
 
 public class Creature : MonoBehaviour {
 
-    public GameObject body;
-    public GameObject frontLeftT;
-    public GameObject frontRightT;
-    public GameObject frontLeftL;
-    public GameObject frontRightL;
-    public GameObject backLeftT;
-    public GameObject backRightT;
-    public GameObject backLeftL;
-    public GameObject backRightL;
+    public GameObject mainBody;
+    public GameObject[] jointObjects;
+    //public GameObject frontLeftT;
+    //public GameObject frontRightT;
+    //public GameObject backLeftT;
+    //public GameObject backRightT;
 
     //There's 4 limbs in this creature we're testing
+    /*
     public Limb rightArm { get; private set; }
     public Limb leftArm { get; private set; }
     public Limb rightLeg { get; private set; }
     public Limb leftLeg { get; private set; }
+    */
+
+    public float standingFitness;
+    private Limb[] limbs;
 
     private BodyCollision bodycoll;
     private NeuralNet brain = null;
@@ -32,19 +34,19 @@ public class Creature : MonoBehaviour {
     private string statusString;
 
     void Start () {
-
-        rightArm = new Limb(frontRightT, body);
-        leftArm = new Limb(frontLeftT, body);
-        rightLeg = new Limb(backRightT, body);
-        leftLeg = new Limb(backLeftT, body);
+        limbs = new Limb[jointObjects.Length];
+        for(int i = 0; i < jointObjects.Length; i++)
+        {
+            limbs[i] = new Limb(jointObjects[i], mainBody);
+        }
 
         //this.training = false;
         fitness = 0;
         finishedInit = true;
-        bodycoll = body.GetComponent<BodyCollision>();
-        bodyRB = body.GetComponent<Rigidbody>();
+        bodycoll = mainBody.GetComponent<BodyCollision>();
+        bodyRB = mainBody.GetComponent<Rigidbody>();
         statusDesc = GetComponent<TextMesh>();
-        previousPosition = body.transform.position;
+        previousPosition = mainBody.transform.position;
     }
 	
 	// Update is called once per frame
@@ -53,22 +55,34 @@ public class Creature : MonoBehaviour {
 
         if (finishedInit == true)
         {
-            float[] inputs = {rightArm.getBodyConnAngle(), rightArm.getLegConnAngle(),
+            /*
+                float[] inputs = {rightArm.getBodyConnAngle(), rightArm.getLegConnAngle(),
                 leftArm.getBodyConnAngle(), leftArm.getLegConnAngle(),
                 rightLeg.getBodyConnAngle(), rightLeg.getLegConnAngle(),
-                leftLeg.getBodyConnAngle(), leftLeg.getLegConnAngle() };
+                leftLeg.getBodyConnAngle(), leftLeg.getLegConnAngle() }
+            */
 
-            float[] outputs = brain.forwardFeed(inputs);
+            List<float> inputs = new List<float>();
+            for(int i = 0; i < limbs.Length; i++)
+            {
+                for(int j = 0; j < limbs[i].getJointNum(); j++)
+                {
+                    inputs.Add(limbs[i].getJointAngle(j));
+                }
+            }
+            float[] inputsArray = inputs.ToArray();
+
+            float[] outputs = brain.forwardFeed(inputsArray);
 
             mapOutputsToInstruction(outputs);
         }
 
         calculateFitness();
-        previousPosition = transform.position;
     }
 
     public void mapOutputsToInstruction(float[] outputs)
     {
+        /*
         rightArm.addForceToBodyHinge(outputs[0]);
         rightArm.addForceToLegHinge(outputs[1]);
         leftArm.addForceToBodyHinge(outputs[2]);
@@ -77,6 +91,17 @@ public class Creature : MonoBehaviour {
         rightLeg.addForceToLegHinge(outputs[5]);
         leftLeg.addForceToBodyHinge(outputs[6]);
         leftLeg.addForceToLegHinge(outputs[7]);
+        */
+
+        int outputIndex = 0;
+        for (int i = 0; i < limbs.Length; i++)
+        {
+            for (int j = 0; j < limbs[i].getJointNum(); j++)
+            {
+                limbs[i].addForceToHinge(outputs[outputIndex], j);
+                outputIndex++;
+            }
+        }
     }
 
     public void calculateFitness()
@@ -84,9 +109,9 @@ public class Creature : MonoBehaviour {
         statusString = "";
 
         //Speed and distance
-        float distanceTravelled = Vector3.Distance(previousPosition, body.transform.position);
+        float distanceTravelled = Vector3.Distance(previousPosition, mainBody.transform.position);
         this.fitness += distanceTravelled;
-        statusString += "MovingSpeed: " + distanceTravelled + "\n";
+        statusString += "Distance: " + distanceTravelled + "\n";
 
         //Body collision with floor
         if (bodycoll.isTouchingGround())
@@ -101,9 +126,9 @@ public class Creature : MonoBehaviour {
         }
 
         //Balance
-        float angleX = convertAngle(body.transform.rotation.eulerAngles.x);
-        float angleY = convertAngle(body.transform.rotation.eulerAngles.y);
-        float angleZ = convertAngle(body.transform.rotation.eulerAngles.z);
+        float angleX = convertAngle(mainBody.transform.rotation.eulerAngles.x);
+        float angleY = convertAngle(mainBody.transform.rotation.eulerAngles.y);
+        float angleZ = convertAngle(mainBody.transform.rotation.eulerAngles.z);
 
         // Use Euler angles
         float imbalanceMeasure = (angleX + angleY + angleZ) * 0.1f; ;
@@ -122,15 +147,15 @@ public class Creature : MonoBehaviour {
         //inverse distance
 
         //Standing fitness
-        if (body.transform.position.y <= 0.35f)
+        if (mainBody.transform.position.y <= standingFitness)
         {
             this.fitness -= 0.3f;
-            statusString += "Standing: false\n";
+            statusString += "Standing: false ("+ mainBody.transform.position.y+")\n";
         }
         else
         {
-            this.fitness += body.transform.position.y;
-            statusString += "Standing: true\n";
+            this.fitness += mainBody.transform.position.y;
+            statusString += "Standing: true(" + mainBody.transform.position.y + ")\n";
         }
 
         statusString += "Fitness: " + fitness + "\n";

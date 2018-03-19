@@ -5,15 +5,20 @@ using UnityEngine;
 public class Limb {
 
     Component[] joints;
+    int jointNum;
+    /*
     HingeJoint bodyConnection;
     HingeJoint lowerLegConnection;
+    */
 
     float force = 10;
 
-    public Limb(GameObject thigh, GameObject body)
+    public Limb(GameObject jointComponent, GameObject body)
     {
-        joints = thigh.GetComponents(typeof(HingeJoint));
+        joints = jointComponent.GetComponents(typeof(HingeJoint));
 
+        jointNum = joints.Length;
+        /*
         foreach(HingeJoint joint in joints)
         {
             if(joint.connectedBody == body.GetComponent<Rigidbody>())
@@ -25,18 +30,31 @@ public class Limb {
                 lowerLegConnection = joint;
             }
         }
+        */
     }
 
-    public float getBodyConnAngle()
+    public float getJointAngle(int jointIndex)
     {
-        return bodyConnection.angle;
+        HingeJoint tempJoint = (HingeJoint)joints[jointIndex];
+        return tempJoint.angle;
     }
 
-    public float getLegConnAngle()
+    public int getJointNum()
     {
-        return lowerLegConnection.angle;
+        return jointNum;
     }
 
+    public void addForceToHinge(float targetVelocity, int jointIndex)
+    {
+        HingeJoint tempJoint = (HingeJoint) joints[jointIndex];
+        JointMotor motor = tempJoint.motor;
+        motor.targetVelocity = targetVelocity * 1000;
+        motor.force = force;
+        tempJoint.motor = motor;
+        tempJoint.useMotor = true;
+    }
+
+    /*
     public void addForceToBodyHinge(float targetVelocity)
     {
         JointMotor motor = bodyConnection.motor;
@@ -54,4 +72,5 @@ public class Limb {
         lowerLegConnection.motor = motor;
         lowerLegConnection.useMotor = true;
     }
+    */
 }

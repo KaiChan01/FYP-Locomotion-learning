@@ -1166,15 +1166,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cef95e9b9178b643b70f2fc078242ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 1100265703133214}
-  frontLeftT: {fileID: 1426800215911542}
-  frontRightT: {fileID: 1781366069934522}
-  frontLeftL: {fileID: 1834315638347348}
-  frontRightL: {fileID: 1396458302578206}
-  backLeftT: {fileID: 1045618570874180}
-  backRightT: {fileID: 1660761367703364}
-  backLeftL: {fileID: 1071673889110676}
-  backRightL: {fileID: 1654625606837794}
+  mainBody: {fileID: 1100265703133214}
+  jointObjects:
+  - {fileID: 1426800215911542}
+  - {fileID: 1781366069934522}
+  - {fileID: 1045618570874180}
+  - {fileID: 1660761367703364}
 --- !u!114 &114534945771454730
 MonoBehaviour:
   m_ObjectHideFlags: 1
