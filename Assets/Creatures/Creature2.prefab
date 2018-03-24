@@ -680,6 +680,9 @@ MonoBehaviour:
   - {fileID: 1978946541165244}
   - {fileID: 1385750727716118}
   - {fileID: 1784748403963916}
+  standingFitness: 0.7
+  training: 1
+  generation: 0
 --- !u!114 &114470172373228070
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -16,6 +16,7 @@ public class TrainingManager : MonoBehaviour {
     public int randomPhase;
     public int mutationRate;
     public float spawnHeight;
+    public string trainingName;
 
     //Not sure how to determine the layout of the neural net yet
     private int[] neuralNetLayout = { 8, 8, 8, 8, 8, 8 };
@@ -26,7 +27,7 @@ public class TrainingManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         training = false;
-        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, runLimit, randomPhase, mutationRate);
+        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, runLimit, randomPhase, mutationRate, trainingName);
         phase = "Initialising";
     }
 	
@@ -58,7 +59,7 @@ public class TrainingManager : MonoBehaviour {
             prepNextGeneration();
             training = true;
             Debug.Log(ga.generatation);
-            if (ga.generatation < ga.runLimit)
+            if (ga.generatation <= ga.runLimit)
             {
                 Invoke("stopTraining", trainingTime);
                 resetFitnessDisplay();
@@ -86,23 +87,31 @@ public class TrainingManager : MonoBehaviour {
             }
         }
 
-        if(ga.generatation > randomPhase)
+        if(ga.generatation > randomPhase && ga.generatation < runLimit)
         {
             ga.replaceOldParentWithNew(numberOfParent);
             //ga.breedNewGeneration(numberOfParent);
 
             ga.mutatePopulation(numberOfParent);
             phase = "Mutating";
+
+            if(ga.generatation % 50 == 0 )
+            {
+                ga.saveNetwork(ga.selectBestNeuralNetFromCurrentGen());
+            }
         }
-        else if (ga.generatation == ga.runLimit)
+        else if (ga.generatation == runLimit)
         {
-            ga.showcaseBestParent();
+            ga.showcaseAndSaveBestParent();
             phase = "Showcasing";
         }
         else if (ga.generatation == randomPhase)
         {
             ga.testAllInitialBest();
             phase = "Testing Best From Random";
+
+            ga.saveNetwork(ga.selectBestNeuralNetFromCurrentGen());
+            
         }
         else if(ga.generatation > 0)
         {
@@ -125,6 +134,7 @@ public class TrainingManager : MonoBehaviour {
         {
             creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(-(numberOfCreatures * 10) + i * 20, spawnHeight, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
             creatureList[i].setBrain(ga.population[i]);
+            creatureList[i].training = true;
         }
     }
 

@@ -8,6 +8,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 public class GeneticAlgorithm
 {
@@ -25,9 +26,12 @@ public class GeneticAlgorithm
 
     private float fitnessSum;
     private int[] neuralStructure;
+    private string trainingName;
+
+    private string trainedFilePath = "/TrainedNetworks/";
 
     //Create population and size
-    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int runLimit, int randomPhase, int mutationRate)
+    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int runLimit, int randomPhase, int mutationRate, string trainingName)
     {
         this.generatation = 0;
         this.populationSize = populationSize;
@@ -37,6 +41,7 @@ public class GeneticAlgorithm
         createRandomGeneration();
         this.mutationRate = mutationRate;
         this.randomPhase = randomPhase;
+        this.trainingName = trainingName;
     }
 
     public void createRandomGeneration()
@@ -166,7 +171,7 @@ public class GeneticAlgorithm
         bestParents.Add(population[chooseBestIndividual()]);
     }
 
-    public void showcaseBestParent()
+    public void showcaseAndSaveBestParent()
     {
         NeuralNet[] newPopulation = new NeuralNet[populationSize];
         float highestFitness = 0;
@@ -177,7 +182,7 @@ public class GeneticAlgorithm
             if (highestFitness <= population[i].getFitness())
             {
                 highestFitness = population[i].getFitness();
-                 fittestIndex = i;
+                fittestIndex = i;
             }
         }
 
@@ -185,6 +190,8 @@ public class GeneticAlgorithm
         {
             newPopulation[i] = new NeuralNet(population[fittestIndex]);
         }
+
+        saveNetwork(population[fittestIndex]);
 
         population = newPopulation;
     }
@@ -217,5 +224,34 @@ public class GeneticAlgorithm
     public void incrementGeneration()
     {
         generatation++;
+    }
+
+    public NeuralNet selectBestNeuralNetFromCurrentGen()
+    {
+        float tempHighestFitness = -10000;
+        NeuralNet bestIndividual = population[0];
+        for (int i = 0; i < populationSize; i++)
+        {
+            float currentFitness = population[i].getFitness();
+            if (currentFitness > tempHighestFitness)
+            {
+                tempHighestFitness = currentFitness;
+                bestIndividual = population[i];
+            }
+        }
+
+        return bestIndividual;
+    }
+
+    public void saveNetwork(NeuralNet network)
+    {
+        TrainedNetwork netToSave = new TrainedNetwork();
+        netToSave.nnStructure = network.getStructure();
+        netToSave.weights = network.flattenWeightsToArray();
+        netToSave.generation = generatation;
+
+        string networkAsJSON = JsonUtility.ToJson(netToSave);
+        string filePath = Application.dataPath + trainedFilePath + trainingName + generatation + ".json";
+        File.WriteAllText(filePath, networkAsJSON);
     }
 }

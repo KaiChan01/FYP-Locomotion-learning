@@ -3,7 +3,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NeuralNet {
+public class NeuralNet
+{
 
     /*
      * A neural net must have
@@ -17,6 +18,7 @@ public class NeuralNet {
     private float[][] neurons;
     private float[][][] weights;
     private float fitnessValue;
+    public int generation = 0;
 
     public NeuralNet(int[] nnStructure)
     {
@@ -27,6 +29,16 @@ public class NeuralNet {
         initaliseWeights();
     }
 
+    public NeuralNet(float[] flatternedWeights, int[] nnStructure, int generation)
+    {
+        this.nnStructure = new int[nnStructure.Length];
+        this.nnStructure = nnStructure;
+        this.generation = generation;
+
+        initaliseNeurons();
+        unflatternWeights(flatternedWeights);
+    }
+ 
     //Copying a NN
     public NeuralNet(NeuralNet netForCopy)
     {
@@ -64,15 +76,15 @@ public class NeuralNet {
                 for (int k = 0; k < previousNeurons; k++)
                 {
                     //Choose from parent
-                   if(Random.Range(0, 2) == 0)
+                    if (Random.Range(0, 2) == 0)
                     {
-                        weightsConnections[k] = parent1Weights[i-1][j][k];
+                        weightsConnections[k] = parent1Weights[i - 1][j][k];
                     }
-                   else
+                    else
                     {
-                        weightsConnections[k] = parent2Weights[i-1][j][k];
+                        weightsConnections[k] = parent2Weights[i - 1][j][k];
                     }
-                    
+
                 }
 
                 layerWeights.Add(weightsConnections);
@@ -93,6 +105,36 @@ public class NeuralNet {
         }
 
         neurons = tempNeurons.ToArray();
+    }
+
+    void unflatternWeights(float[] flatternedWeights)
+    {
+        int indexer = 0;
+        List<float[][]> tempWeights = new List<float[][]>();
+
+        for (int i = 1; i < nnStructure.Length; i++)
+        {
+            List<float[]> layerWeights = new List<float[]>();
+
+            int previousNeurons = nnStructure[i - 1];
+
+            //Weights layer
+            for (int j = 0; j < nnStructure[i]; j++)
+            {
+                float[] weightsConnections = new float[previousNeurons];
+
+                for (int k = 0; k < previousNeurons; k++)
+                {
+                    weightsConnections[k] = flatternedWeights[indexer];
+                    indexer++;
+                }
+
+                layerWeights.Add(weightsConnections);
+            }
+            tempWeights.Add(layerWeights.ToArray());
+        }
+
+        weights = tempWeights.ToArray();
     }
 
     void initaliseWeights()
@@ -130,9 +172,9 @@ public class NeuralNet {
 
     void copyNeurons(float[][] neurons)
     {
-        for(int layer = 0; layer < neurons.Length; layer++)
+        for (int layer = 0; layer < neurons.Length; layer++)
         {
-            for(int neuronIndex = 0; neuronIndex < neurons[layer].Length; neuronIndex++)
+            for (int neuronIndex = 0; neuronIndex < neurons[layer].Length; neuronIndex++)
             {
                 this.neurons[layer][neuronIndex] = neurons[layer][neuronIndex];
             }
@@ -156,7 +198,7 @@ public class NeuralNet {
 
                 for (int k = 0; k < previousNeurons; k++)
                 {
-                    weightsConnections[k] = weightsCopy[i-1][j][k];
+                    weightsConnections[k] = weightsCopy[i - 1][j][k];
                 }
 
                 layerWeights.Add(weightsConnections);
@@ -173,50 +215,50 @@ public class NeuralNet {
     {
 
         //we will translate the inputs into the neural net
-        for(int i = 0; i < inputs.Length; i++)
+        for (int i = 0; i < inputs.Length; i++)
         {
             neurons[0][i] = inputs[i];
         }
 
         //Interate through the rest of the neurons 
         //For the number of layers in the NN loop through
-        for(int i = 1; i < nnStructure.Length; i++)
+        for (int i = 1; i < nnStructure.Length; i++)
         {
             //For every neuron in the layer, we start at the second layer
-            for(int neuronIndex = 0; neuronIndex < nnStructure[i]; neuronIndex++)
+            for (int neuronIndex = 0; neuronIndex < nnStructure[i]; neuronIndex++)
             {
                 float totalWeight = 0f;
                 //for every previous neuron that's connected to the current neuron
-                for (int prevNeuronIndex = 0; prevNeuronIndex < nnStructure[i-1]; prevNeuronIndex++)
+                for (int prevNeuronIndex = 0; prevNeuronIndex < nnStructure[i - 1]; prevNeuronIndex++)
                 {
-                    totalWeight += weights[i-1][neuronIndex][prevNeuronIndex] * neurons[i-1][prevNeuronIndex];
+                    totalWeight += weights[i - 1][neuronIndex][prevNeuronIndex] * neurons[i - 1][prevNeuronIndex];
                 }
 
-                neurons[i][neuronIndex] = (float) System.Math.Tanh(totalWeight);
+                neurons[i][neuronIndex] = (float)System.Math.Tanh(totalWeight);
             }
         }
 
-        return neurons[nnStructure.Length-1];
+        return neurons[nnStructure.Length - 1];
     }
 
     //Should look into ReLU as an activation function
     public void mutate(int mutationRate)
     {
-        for(int layer = 0; layer < weights.Length; layer++)
+        for (int layer = 0; layer < weights.Length; layer++)
         {
-            for(int neuron = 0; neuron < weights[layer].Length; neuron++)
+            for (int neuron = 0; neuron < weights[layer].Length; neuron++)
             {
-                for(int weight = 0; weight < weights[layer][neuron].Length; weight++)
+                for (int weight = 0; weight < weights[layer][neuron].Length; weight++)
                 {
                     float mutatedWeight = weights[layer][neuron][weight];
 
                     int randomValue = UnityEngine.Random.Range(0, mutationRate);
 
-                    if(randomValue <= 2)
+                    if (randomValue <= 2)
                     {
-                        mutatedWeight = mutatedWeight*-1;
+                        mutatedWeight = mutatedWeight * -1;
                     }
-                    else if(randomValue <= 4)
+                    else if (randomValue <= 4)
                     {
                         mutatedWeight = UnityEngine.Random.Range(-0.5f, 0.5f);
                     }
@@ -255,4 +297,78 @@ public class NeuralNet {
     {
         fitnessValue = 0;
     }
+
+    public int[] getStructure()
+    {
+        return nnStructure;
+    }
+
+    public float[][][] getWeights()
+    {
+        return weights;
+    }
+
+    /*
+    public string convertWeightToString()
+    {
+        string weightsString = "{";
+
+        for(int i = 0; i < weights.Length; i++)
+        {
+            weightsString += i + ": {";
+            for (int j = 0; j < weights[i].Length; j++)
+            {
+                weightsString += j + ": {";
+                for (int k = 0; k < weights[i][j].Length; k++)
+                {
+                    weightsString += k + ":" + weights[i][j][k] + ",";
+                }
+                weightsString += "},";
+            }
+            if(i == weights.Length-1)
+            {
+                weightsString += "}";
+            }
+            else
+            {
+                weightsString += "},";
+            }
+        }
+        return weightsString;
+    }
+    */
+
+    public float[] flattenWeightsToArray()
+    {
+        int sizeOfFlattenedArray = 0;
+        for (int i = 0; i < weights.Length; i++)
+        {
+            for (int j = 0; j < weights[i].Length; j++)
+            {
+                sizeOfFlattenedArray += weights[i][j].Length;
+            }
+        }
+
+        float[] weightsFlattened = new float[sizeOfFlattenedArray];
+        int indexer = 0;
+
+        for (int i = 0; i < weights.Length; i++)
+        {
+            for (int j = 0; j < weights[i].Length; j++)
+            {
+                for (int k = 0; k < weights[i][j].Length; k++)
+                {
+                    weightsFlattened[indexer] = weights[i][j][k];
+                    indexer++;
+                }
+            }
+        }
+        return weightsFlattened;
+    }
+
+    public int getGeneration()
+    {
+        return generation;
+    }
 }
+

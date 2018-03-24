@@ -6,18 +6,6 @@ public class Creature : MonoBehaviour {
 
     public GameObject mainBody;
     public GameObject[] jointObjects;
-    //public GameObject frontLeftT;
-    //public GameObject frontRightT;
-    //public GameObject backLeftT;
-    //public GameObject backRightT;
-
-    //There's 4 limbs in this creature we're testing
-    /*
-    public Limb rightArm { get; private set; }
-    public Limb leftArm { get; private set; }
-    public Limb rightLeg { get; private set; }
-    public Limb leftLeg { get; private set; }
-    */
 
     public float standingFitness;
     private Limb[] limbs;
@@ -29,9 +17,13 @@ public class Creature : MonoBehaviour {
     private bool brainAssigned;
     private bool finishedInit = false;
 
-    private Rigidbody bodyRB;
     private TextMesh statusDesc;
     private string statusString;
+
+    [HideInInspector]
+    public bool training;
+    [HideInInspector]
+    public int generation;
 
     void Start () {
         limbs = new Limb[jointObjects.Length];
@@ -44,9 +36,14 @@ public class Creature : MonoBehaviour {
         fitness = 0;
         finishedInit = true;
         bodycoll = mainBody.GetComponent<BodyCollision>();
-        bodyRB = mainBody.GetComponent<Rigidbody>();
         statusDesc = GetComponent<TextMesh>();
         previousPosition = mainBody.transform.position;
+
+        if (!training)
+        {
+            statusString = "Generation: " + generation;
+            updateTextMesh();
+        }
     }
 	
 	// Update is called once per frame
@@ -55,13 +52,6 @@ public class Creature : MonoBehaviour {
 
         if (finishedInit == true)
         {
-            /*
-                float[] inputs = {rightArm.getBodyConnAngle(), rightArm.getLegConnAngle(),
-                leftArm.getBodyConnAngle(), leftArm.getLegConnAngle(),
-                rightLeg.getBodyConnAngle(), rightLeg.getLegConnAngle(),
-                leftLeg.getBodyConnAngle(), leftLeg.getLegConnAngle() }
-            */
-
             List<float> inputs = new List<float>();
             for(int i = 0; i < limbs.Length; i++)
             {
@@ -77,22 +67,19 @@ public class Creature : MonoBehaviour {
             mapOutputsToInstruction(outputs);
         }
 
-        calculateFitness();
+        if (training)
+        {
+            calculateFitness();
+        }
     }
 
-    public void mapOutputsToInstruction(float[] outputs)
+    public void mapOutputsToInstruction()
     {
-        /*
-        rightArm.addForceToBodyHinge(outputs[0]);
-        rightArm.addForceToLegHinge(outputs[1]);
-        leftArm.addForceToBodyHinge(outputs[2]);
-        leftArm.addForceToLegHinge(outputs[3]);
-        rightLeg.addForceToBodyHinge(outputs[4]);
-        rightLeg.addForceToLegHinge(outputs[5]);
-        leftLeg.addForceToBodyHinge(outputs[6]);
-        leftLeg.addForceToLegHinge(outputs[7]);
-        */
 
+    }
+
+        public void mapOutputsToInstruction(float[] outputs)
+    {
         int outputIndex = 0;
         for (int i = 0; i < limbs.Length; i++)
         {
