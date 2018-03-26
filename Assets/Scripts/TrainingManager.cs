@@ -12,11 +12,14 @@ public class TrainingManager : MonoBehaviour {
     private bool training;
     public Text fitnessDisplay;
     public int trainingTime;
+    public int maxTimeLimit = 60;
+    public float timePassedSinceNewGeneration;
     public int runLimit;
     public int randomPhase;
     public int mutationRate;
     public float spawnHeight;
     public string trainingName;
+    private bool creaturesAlive;
 
     //Not sure how to determine the layout of the neural net yet
     private int[] neuralNetLayout = { 8, 8, 8, 8, 8, 8 };
@@ -24,15 +27,15 @@ public class TrainingManager : MonoBehaviour {
 
     GeneticAlgorithm ga;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
         training = false;
         ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, runLimit, randomPhase, mutationRate, trainingName);
         phase = "Initialising";
     }
-	
-	// Update is called once per frame
-	void FixedUpdate () {
+
+    // Update is called once per frame
+    void FixedUpdate() {
 
         if (Input.GetKey("right") && Time.timeScale > 0)
         {
@@ -61,16 +64,22 @@ public class TrainingManager : MonoBehaviour {
             Debug.Log(ga.generatation);
             if (ga.generatation <= ga.runLimit)
             {
-                Invoke("stopTraining", trainingTime);
                 resetFitnessDisplay();
             }
         }
-	}
+
+        timePassedSinceNewGeneration += Time.deltaTime;
+
+        if(timePassedSinceNewGeneration > maxTimeLimit)
+        {
+            maxTimeLimitReached();
+        }
+    }
 
     public void stopTraining()
     {
         training = false;
-        for(int i = 0; i< numberOfCreatures; i++)
+        for (int i = 0; i < numberOfCreatures; i++)
         {
             creatureList[i].calculateFitness();
             ga.population[i].setFitness(creatureList[i].getFitness());
@@ -79,7 +88,7 @@ public class TrainingManager : MonoBehaviour {
 
     public void prepNextGeneration()
     {
-        if(creatureList != null)
+        if (creatureList != null)
         {
             for (int i = 0; i < creatureList.Count; i++)
             {
@@ -87,15 +96,14 @@ public class TrainingManager : MonoBehaviour {
             }
         }
 
-        if(ga.generatation > randomPhase && ga.generatation < runLimit)
+        if (ga.generatation > randomPhase && ga.generatation < runLimit)
         {
             ga.replaceOldParentWithNew(numberOfParent);
-            //ga.breedNewGeneration(numberOfParent);
 
             ga.mutatePopulation(numberOfParent);
             phase = "Mutating";
 
-            if(ga.generatation % 50 == 0 )
+            if (ga.generatation % 50 == 0)
             {
                 ga.saveNetwork(ga.selectBestNeuralNetFromCurrentGen());
             }
@@ -105,15 +113,19 @@ public class TrainingManager : MonoBehaviour {
             ga.showcaseAndSaveBestParent();
             phase = "Showcasing";
         }
+        else if (ga.generatation > runLimit)
+        {
+            Application.Quit();
+        }
         else if (ga.generatation == randomPhase)
         {
             ga.testAllInitialBest();
             phase = "Testing Best From Random";
 
             ga.saveNetwork(ga.selectBestNeuralNetFromCurrentGen());
-            
+
         }
-        else if(ga.generatation > 0)
+        else if (ga.generatation > 0)
         {
             ga.addBestParent();
             ga.createRandomGeneration();
@@ -135,7 +147,11 @@ public class TrainingManager : MonoBehaviour {
             creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(-(numberOfCreatures * 10) + i * 20, spawnHeight, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
             creatureList[i].setBrain(ga.population[i]);
             creatureList[i].training = true;
+            creatureList[i].trainingTime = trainingTime;
         }
+        creaturesAlive = true;
+        Invoke("checkIfCreaturesAreAlive", trainingTime);
+        timePassedSinceNewGeneration = 0;
     }
 
     public void updateFitnessDisplay()
@@ -143,7 +159,7 @@ public class TrainingManager : MonoBehaviour {
         resetFitnessDisplay();
         for (int i = 0; i < numberOfCreatures; i++)
         {
-            fitnessDisplay.text = fitnessDisplay.text + "Creature"+ i +" fitness:" + ga.population[i].getFitness() + "\n";
+            fitnessDisplay.text = fitnessDisplay.text + " Alive: " + creatureList[i].getAlive() + ". Creature" + i + " fitness:" + ga.population[i].getFitness() + "\n";
         }
         fitnessDisplay.text = fitnessDisplay.text + "Mutation rate: " + ga.mutationRate + "\n";
         fitnessDisplay.text = fitnessDisplay.text + "Fittest from last generation: " + ga.highestFromGeneration + "\n";
@@ -152,5 +168,34 @@ public class TrainingManager : MonoBehaviour {
     public void resetFitnessDisplay()
     {
         fitnessDisplay.text = "";
+    }
+
+    public void checkIfCreaturesAreAlive()
+    {
+        bool creatureChecker = false;
+        for (int i = 0; i < creatureList.Count; i++)
+        {
+            //Check if there are still creatures alive
+            if (creatureList[i].getAlive())
+            {
+                creatureChecker = true;
+            }
+        }
+        if (!creatureChecker)
+        {
+            creaturesAlive = false;
+            stopTraining();
+        }
+
+        //If some creatures are alive, check again every 1 second
+        if (creaturesAlive)
+        {
+            Invoke("checkIfCreaturesAreAlive", 1);
+        }
+    }
+
+    public void maxTimeLimitReached()
+    {
+        stopTraining();
     }
 }

@@ -251,7 +251,7 @@ public class GeneticAlgorithm
         netToSave.generation = generatation;
 
         string networkAsJSON = JsonUtility.ToJson(netToSave);
-        string filePath = Application.dataPath + trainedFilePath + trainingName + generatation + ".json";
+        string filePath = Application.dataPath + trainedFilePath + trainingName + "_" + generatation + ".json";
         File.WriteAllText(filePath, networkAsJSON);
     }
 }

@@ -410,12 +410,14 @@ MonoBehaviour:
   creaturePrefab: {fileID: 1945076337345088, guid: e95041916f522b64b8b836f0bb99fe59,
     type: 2}
   fitnessDisplay: {fileID: 166632393}
-  trainingTime: 20
-  runLimit: 300
+  trainingTime: 10
+  maxTimeLimit: 60
+  timePassedSinceNewGeneration: 0
+  runLimit: 500
   randomPhase: 20
   mutationRate: 1000
   spawnHeight: 0
-  trainingName: TestingRunlimit
+  trainingName: FirstTestRun
 --- !u!4 &1019187117
 Transform:
   m_ObjectHideFlags: 0

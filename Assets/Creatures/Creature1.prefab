@@ -1172,9 +1172,11 @@ MonoBehaviour:
   - {fileID: 1781366069934522}
   - {fileID: 1045618570874180}
   - {fileID: 1660761367703364}
-  standingFitness: 0.35
+  standingFitness: 0.4
+  desiredSpeed: 0.2
   training: 1
   generation: 0
+  trainingTime: 0
 --- !u!114 &114534945771454730
 MonoBehaviour:
   m_ObjectHideFlags: 1

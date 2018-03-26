@@ -53,24 +53,4 @@ public class Limb {
         tempJoint.motor = motor;
         tempJoint.useMotor = true;
     }
-
-    /*
-    public void addForceToBodyHinge(float targetVelocity)
-    {
-        JointMotor motor = bodyConnection.motor;
-        motor.targetVelocity = targetVelocity * 1000;
-        motor.force = force;
-        bodyConnection.motor = motor;
-        bodyConnection.useMotor = true;
-    }
-
-    public void addForceToLegHinge(float targetVelocity)
-    {
-        JointMotor motor = lowerLegConnection.motor;
-        motor.targetVelocity = targetVelocity * 1000;
-        motor.force = force;
-        lowerLegConnection.motor = motor;
-        lowerLegConnection.useMotor = true;
-    }
-    */
 }

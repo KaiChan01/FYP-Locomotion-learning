@@ -8,22 +8,26 @@ public class Creature : MonoBehaviour {
     public GameObject[] jointObjects;
 
     public float standingFitness;
+    public float desiredSpeed;
     private Limb[] limbs;
 
     private BodyCollision bodycoll;
     private NeuralNet brain = null;
     private Vector3 previousPosition;
     private float fitness;
-    private bool brainAssigned;
+    private bool alive;
     private bool finishedInit = false;
 
     private TextMesh statusDesc;
     private string statusString;
+    private Vector3 previousPos;
 
     [HideInInspector]
     public bool training;
     [HideInInspector]
     public int generation;
+    [HideInInspector]
+    public int trainingTime;
 
     void Start () {
         limbs = new Limb[jointObjects.Length];
@@ -44,6 +48,9 @@ public class Creature : MonoBehaviour {
             statusString = "Generation: " + generation;
             updateTextMesh();
         }
+        alive = true;
+        previousPos = mainBody.transform.position;
+        Invoke("checkIfAlive", trainingTime);
     }
 	
 	// Update is called once per frame
@@ -67,7 +74,7 @@ public class Creature : MonoBehaviour {
             mapOutputsToInstruction(outputs);
         }
 
-        if (training)
+        if (training && alive)
         {
             calculateFitness();
         }
@@ -96,9 +103,9 @@ public class Creature : MonoBehaviour {
         statusString = "";
 
         //Speed and distance
-        float distanceTravelled = Vector3.Distance(previousPosition, mainBody.transform.position);
-        this.fitness += distanceTravelled;
-        statusString += "Distance: " + distanceTravelled + "\n";
+        float totalDistanceTravelled = Vector3.Distance(previousPosition, mainBody.transform.position);
+        this.fitness += totalDistanceTravelled;
+        statusString += "TotalDistance: " + totalDistanceTravelled + "\n";
 
         //Body collision with floor
         if (bodycoll.isTouchingGround())
@@ -161,6 +168,11 @@ public class Creature : MonoBehaviour {
         return fitness;
     }
 
+    public bool getAlive()
+    {
+        return alive;
+    }
+
     public void setBrain(NeuralNet newBrain)
     {
         brain = newBrain;
@@ -175,5 +187,16 @@ public class Creature : MonoBehaviour {
         }
 
         return Mathf.Abs(newAngle);
+    }
+
+    void checkIfAlive()
+    {
+        float distanceTravelled = Vector3.Distance(previousPos, mainBody.transform.position);
+        if(distanceTravelled < desiredSpeed || fitness < 1000)
+        {
+            alive = false;
+        }
+        previousPos = mainBody.transform.position;
+        Invoke("checkIfAlive", 1);
     }
 }
