@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class SimulationManager : MonoBehaviour {
+public class PlayerSpawner : MonoBehaviour {
 
-    [Tooltip("Filenames in TrainedNetworks folder")]
-    public string[] fileNames;
-    private string trainedFilePath = "/TrainedNetworks/";
-    private List<Creature> creatureList;
+    [Tooltip("Enter the filenames for movement in order: forward, backwards, left, right and standing")]
+    public string[] fileNames = new string[5];
+    private string trainedFilePath = "/TrainedMovementNetworks/";
     public GameObject creaturePrefab;
     private List<NeuralNet> networkList = new List<NeuralNet>();
     private NeuralNet[] networkArray;
     public int spawnHeight;
+    private PlayerCreature player;
 
     // Use this for initialization
     void Start () {
         loadTrainedNetworks();
-        putNewCreaturesInScene();
+        spawnPlayer();
     }
 	
 	// Update is called once per frame
@@ -27,7 +27,7 @@ public class SimulationManager : MonoBehaviour {
 
     private void loadTrainedNetworks()
     {
-        for(int i = 0; i < fileNames.Length; i++)
+        for (int i = 0; i < fileNames.Length; i++)
         {
             string filePath = Application.dataPath + trainedFilePath + fileNames[i];
             TrainedNetwork trainedNetwork;
@@ -46,16 +46,13 @@ public class SimulationManager : MonoBehaviour {
         networkArray = networkList.ToArray();
     }
 
-    public void putNewCreaturesInScene()
+    public void spawnPlayer()
     {
-        creatureList = new List<Creature>();
-
-        for (int i = 0; i < networkArray.Length; i++)
-        {
-            creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(i*15, spawnHeight, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
-            creatureList[i].setBrain(networkArray[i]);
-            creatureList[i].training = false;
-            creatureList[i].generation = networkArray[i].getGeneration();
-        }
+        player = ((GameObject)Instantiate(creaturePrefab, new Vector3(0, spawnHeight, 0), creaturePrefab.transform.rotation)).GetComponent<PlayerCreature>();
+        player.setForwardNetwork(networkArray[0]);
+        player.setBackwardNetwork(networkArray[1]);
+        player.setLeftNetwork(networkArray[2]);
+        player.setRightNetwork(networkArray[3]);
+        player.setIdleNetwork(networkArray[4]);
     }
 }

@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//This class is a collision detection script for detecting if the attached gameobject is touching the ground 
 public class BodyCollision : MonoBehaviour {
 
-    // Use this for initialization
-
     private bool isTouching;
-    void Start () {
-    }
-	
-	// Update is called once per frame
-	void Update () {
 
-	}
+    void Start () {
+        isTouching = false;
+    }
 
     void OnCollisionEnter(Collision other)
     {

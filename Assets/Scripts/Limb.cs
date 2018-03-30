@@ -4,52 +4,40 @@ using UnityEngine;
 
 public class Limb {
 
+    //Stores all of the HingeJoint components in the gameobject
     Component[] joints;
     int jointNum;
-    /*
-    HingeJoint bodyConnection;
-    HingeJoint lowerLegConnection;
-    */
 
     float force = 10;
+
 
     public Limb(GameObject jointComponent, GameObject body)
     {
         joints = jointComponent.GetComponents(typeof(HingeJoint));
 
         jointNum = joints.Length;
-        /*
-        foreach(HingeJoint joint in joints)
-        {
-            if(joint.connectedBody == body.GetComponent<Rigidbody>())
-            {
-                bodyConnection = joint;
-            }
-            else
-            {
-                lowerLegConnection = joint;
-            }
-        }
-        */
     }
 
+    //Get the anlge of the joint given the index of the jointArray
     public float getJointAngle(int jointIndex)
     {
         HingeJoint tempJoint = (HingeJoint)joints[jointIndex];
         return tempJoint.angle;
     }
 
+    //Return the number of hinge joints in this limb
     public int getJointNum()
     {
         return jointNum;
     }
 
+    //Add force to limb
     public void addForceToHinge(float targetVelocity, int jointIndex)
     {
         HingeJoint tempJoint = (HingeJoint) joints[jointIndex];
         JointMotor motor = tempJoint.motor;
         motor.targetVelocity = targetVelocity * 1000;
-        motor.force = force;
+        motor.force = Mathf.Abs(targetVelocity) * 1000;
         tempJoint.motor = motor;
         tempJoint.useMotor = true;
     }

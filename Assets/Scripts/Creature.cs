@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Creature : MonoBehaviour {
 
+    public TrainingType trainingType;
+    private Vector3 target;
+    private float startingDistanceToTarget;
+
     public GameObject mainBody;
     public GameObject[] jointObjects;
 
@@ -13,7 +17,7 @@ public class Creature : MonoBehaviour {
 
     private BodyCollision bodycoll;
     private NeuralNet brain = null;
-    private Vector3 previousPosition;
+    private Vector3 startingPos;
     private float fitness;
     private bool alive;
     private bool finishedInit = false;
@@ -36,21 +40,40 @@ public class Creature : MonoBehaviour {
             limbs[i] = new Limb(jointObjects[i], mainBody);
         }
 
-        //this.training = false;
         fitness = 0;
         finishedInit = true;
         bodycoll = mainBody.GetComponent<BodyCollision>();
         statusDesc = GetComponent<TextMesh>();
-        previousPosition = mainBody.transform.position;
+        startingPos = mainBody.transform.position;
 
-        if (!training)
-        {
-            statusString = "Generation: " + generation;
-            updateTextMesh();
-        }
         alive = true;
         previousPos = mainBody.transform.position;
         Invoke("checkIfAlive", trainingTime);
+
+        switch (trainingType)
+        {
+            case TrainingType.forward:
+                target = new Vector3(startingPos.x, startingPos.y, startingPos.z + 10000);
+                break;
+
+            case TrainingType.backward:
+                target = new Vector3(startingPos.x, startingPos.y, startingPos.z - 10000);
+                break;
+
+            case TrainingType.left:
+                target = new Vector3(startingPos.x - 10000, startingPos.y, startingPos.z);
+                break;
+
+            case TrainingType.right:
+                target = new Vector3(startingPos.x + 10000, startingPos.y, startingPos.z);
+                break;
+
+            case TrainingType.standing:
+                target = startingPos;
+                break;
+        }
+
+        startingDistanceToTarget = Vector3.Distance(startingPos, target);
     }
 	
 	// Update is called once per frame
@@ -80,32 +103,32 @@ public class Creature : MonoBehaviour {
         }
     }
 
-    public void mapOutputsToInstruction()
-    {
-
-    }
-
         public void mapOutputsToInstruction(float[] outputs)
-    {
-        int outputIndex = 0;
-        for (int i = 0; i < limbs.Length; i++)
         {
-            for (int j = 0; j < limbs[i].getJointNum(); j++)
+            int outputIndex = 0;
+            for (int i = 0; i < limbs.Length; i++)
             {
-                limbs[i].addForceToHinge(outputs[outputIndex], j);
-                outputIndex++;
+                for (int j = 0; j < limbs[i].getJointNum(); j++)
+                {
+                    limbs[i].addForceToHinge(outputs[outputIndex], j);
+                    outputIndex++;
+                }
             }
         }
-    }
 
     public void calculateFitness()
     {
+        Vector3 currentPosition = mainBody.transform.position;
+
         statusString = "";
 
         //Speed and distance
-        float totalDistanceTravelled = Vector3.Distance(previousPosition, mainBody.transform.position);
-        this.fitness += totalDistanceTravelled;
-        statusString += "TotalDistance: " + totalDistanceTravelled + "\n";
+        float distanceToTarget = Vector3.Distance(target, currentPosition);
+        this.fitness += startingDistanceToTarget - distanceToTarget;
+
+        statusString += "Target: " + target + "\n";
+        statusString += "Position: " + currentPosition + "\n";
+        statusString += "Distance to Target: " + distanceToTarget + "\n";
 
         //Body collision with floor
         if (bodycoll.isTouchingGround())
@@ -141,15 +164,24 @@ public class Creature : MonoBehaviour {
         //inverse distance
 
         //Standing fitness
-        if (mainBody.transform.position.y <= standingFitness)
+        if (currentPosition.y <= standingFitness)
         {
             this.fitness -= 0.3f;
-            statusString += "Standing: false ("+ mainBody.transform.position.y+")\n";
+            statusString += "Standing: false ("+ currentPosition.y+")\n";
         }
         else
         {
-            this.fitness += mainBody.transform.position.y;
-            statusString += "Standing: true(" + mainBody.transform.position.y + ")\n";
+            this.fitness += currentPosition.y;
+            statusString += "Standing: true(" + currentPosition.y + ")\n";
+        }
+
+        if(trainingType == TrainingType.forward || trainingType == TrainingType.backward)
+        {
+            this.fitness -= Mathf.Abs(currentPosition.x - startingPos.x);
+        }
+        else if (trainingType == TrainingType.left || trainingType == TrainingType.right)
+        {
+            this.fitness -= Mathf.Abs(currentPosition.z - startingPos.z);
         }
 
         statusString += "Fitness: " + fitness + "\n";

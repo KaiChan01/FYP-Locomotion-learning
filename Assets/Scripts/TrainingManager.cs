@@ -3,8 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum TrainingType
+{   forward = 0,
+    backward = 1,
+    left = 2,
+    right = 3,
+    standing = 4
+};
+
 public class TrainingManager : MonoBehaviour {
 
+    public TrainingType trainingType;
     public int numberOfCreatures;
     public int numberOfParent;
     public GameObject creaturePrefab;
@@ -13,13 +22,13 @@ public class TrainingManager : MonoBehaviour {
     public Text fitnessDisplay;
     public int trainingTime;
     public int maxTimeLimit = 60;
-    public float timePassedSinceNewGeneration;
     public int runLimit;
     public int randomPhase;
     public int mutationRate;
     public float spawnHeight;
     public string trainingName;
     private bool creaturesAlive;
+    private float timePassedSinceNewGeneration;
 
     //Not sure how to determine the layout of the neural net yet
     private int[] neuralNetLayout = { 8, 8, 8, 8, 8, 8 };
@@ -148,6 +157,7 @@ public class TrainingManager : MonoBehaviour {
             creatureList[i].setBrain(ga.population[i]);
             creatureList[i].training = true;
             creatureList[i].trainingTime = trainingTime;
+            creatureList[i].trainingType = trainingType;
         }
         creaturesAlive = true;
         Invoke("checkIfCreaturesAreAlive", trainingTime);

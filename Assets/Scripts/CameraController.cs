@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+//Class for moving the camera and navigating the simulation
 public class CameraController : MonoBehaviour {
 
     public GameObject camera;
