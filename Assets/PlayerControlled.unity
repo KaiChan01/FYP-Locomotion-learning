@@ -242,10 +242,9 @@ MonoBehaviour:
   - TrainingFoward_500.json
   - TrainingFoward_500.json
   - TrainingFoward_500.json
-  - TrainingFoward_500.json
-  creaturePrefab: {fileID: 1928475816464800, guid: f44a457d0f17c2d41a9489e1bab91edc,
+  creaturePrefab: {fileID: 1166454869704676, guid: b9ff2bbb5d5979c469bf12e0163a47de,
     type: 2}
-  spawnHeight: -1
+  spawnHeight: 0
 --- !u!4 &1019187117
 Transform:
   m_ObjectHideFlags: 0

@@ -6,7 +6,7 @@ using System.IO;
 public class PlayerSpawner : MonoBehaviour {
 
     [Tooltip("Enter the filenames for movement in order: forward, backwards, left, right and standing")]
-    public string[] fileNames = new string[5];
+    public string[] fileNames = new string[4];
     private string trainedFilePath = "/TrainedMovementNetworks/";
     public GameObject creaturePrefab;
     private List<NeuralNet> networkList = new List<NeuralNet>();
@@ -53,6 +53,5 @@ public class PlayerSpawner : MonoBehaviour {
         player.setBackwardNetwork(networkArray[1]);
         player.setLeftNetwork(networkArray[2]);
         player.setRightNetwork(networkArray[3]);
-        player.setIdleNetwork(networkArray[4]);
     }
 }

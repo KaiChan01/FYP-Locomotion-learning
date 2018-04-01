@@ -41,4 +41,15 @@ public class Limb {
         tempJoint.motor = motor;
         tempJoint.useMotor = true;
     }
+
+    public void revertToOriginalPosition()
+    {
+        for(int i = 0; i < jointNum; i++)
+        {
+            HingeJoint tempJoint = (HingeJoint)joints[i];
+            JointMotor motor = tempJoint.motor;
+            tempJoint.useSpring = true;
+            tempJoint.useMotor = false;
+        }
+    }
 }

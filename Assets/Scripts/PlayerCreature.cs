@@ -44,6 +44,7 @@ public class PlayerCreature : MonoBehaviour {
 
         float[] inputsArray = inputs.ToArray();
 
+        /*
         if (Input.anyKeyDown)
         {
             keyDown = true;
@@ -54,6 +55,7 @@ public class PlayerCreature : MonoBehaviour {
             keyDown = false;
             this.transform.position = new Vector3(transform.position.x, transform.position.y + 2, transform.position.z);
         }
+        */
 
         if (Input.GetKey(KeyCode.A))
         {
@@ -77,8 +79,10 @@ public class PlayerCreature : MonoBehaviour {
         }
         else if (Input.anyKey == false)
         {
-            float[] outputs = idleNet.forwardFeed(inputsArray);
-            mapOutputsToInstruction(outputs);
+            for(int i = 0; i < limbs.Length; i++)
+            {
+                limbs[i].revertToOriginalPosition();
+            }
         }
 
         
@@ -115,11 +119,6 @@ public class PlayerCreature : MonoBehaviour {
     public void setRightNetwork(NeuralNet rightNet)
     {
         this.rightNet = rightNet;
-    }
-
-    public void setIdleNetwork(NeuralNet idleNet)
-    {
-        this.idleNet = idleNet;
     }
 
 }

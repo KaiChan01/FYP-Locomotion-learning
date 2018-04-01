@@ -408,7 +408,7 @@ MonoBehaviour:
   trainingType: 0
   numberOfCreatures: 20
   numberOfParent: 2
-  creaturePrefab: {fileID: 1813128933867518, guid: 3a082dfda25e3dd4b999cb1351c67d63,
+  creaturePrefab: {fileID: 1843999084887676, guid: af11c574c324db646b7d29d1ea9248f6,
     type: 2}
   fitnessDisplay: {fileID: 166632393}
   trainingTime: 10
@@ -416,8 +416,8 @@ MonoBehaviour:
   runLimit: 1000
   randomPhase: 20
   mutationRate: 1000
-  spawnHeight: -1
-  trainingName: TrainingFoward
+  spawnHeight: 0
+  trainingName: test
 --- !u!4 &1019187117
 Transform:
   m_ObjectHideFlags: 0
