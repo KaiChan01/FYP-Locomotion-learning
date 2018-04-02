@@ -27,6 +27,7 @@ public class TrainingManager : MonoBehaviour {
     public int mutationRate;
     public float spawnHeight;
     public string trainingName;
+    public bool saveTraining;
     private bool creaturesAlive;
     private float timePassedSinceNewGeneration;
 
@@ -97,6 +98,11 @@ public class TrainingManager : MonoBehaviour {
 
     public void prepNextGeneration()
     {
+        if(ga.generatation > 0)
+        {
+            ga.saveLog();
+        }
+
         if (creatureList != null)
         {
             for (int i = 0; i < creatureList.Count; i++)
@@ -112,7 +118,7 @@ public class TrainingManager : MonoBehaviour {
             ga.mutatePopulation(numberOfParent);
             phase = "Mutating";
 
-            if (ga.generatation % 50 == 0)
+            if (ga.generatation % 50 == 0 && saveTraining)
             {
                 ga.saveNetwork(ga.selectBestNeuralNetFromCurrentGen());
             }
@@ -125,6 +131,7 @@ public class TrainingManager : MonoBehaviour {
         else if (ga.generatation > runLimit)
         {
             Application.Quit();
+            UnityEditor.EditorApplication.isPlaying = false;
         }
         else if (ga.generatation == randomPhase)
         {
@@ -140,7 +147,6 @@ public class TrainingManager : MonoBehaviour {
             ga.createRandomGeneration();
             phase = "Testing Random";
         }
-
         Debug.Log(phase);
 
         putNewCreaturesInScene();

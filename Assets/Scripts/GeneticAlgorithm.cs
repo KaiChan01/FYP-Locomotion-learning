@@ -28,6 +28,8 @@ public class GeneticAlgorithm
     private int[] neuralStructure;
     private string trainingName;
 
+    private string logsFilePath = "/Logs/";
+    private string logfileName = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss");
     private string trainedFilePath = "/TrainedNetworks/";
 
     //Create population and size
@@ -127,11 +129,11 @@ public class GeneticAlgorithm
 
     public int chooseBestIndividual()
     {
-        float highestFitness = -100000;
+        float highestFitness = population[0].getFitness();
 
-        int highestIndex = -1;
+        int highestIndex = 0;
 
-        for (int i = 0; i < populationSize; i++)
+        for (int i = 1; i < populationSize; i++)
         {
             //If the creature's fitness is new highest and isn't already in array
             if (highestFitness <= population[i].getFitness())
@@ -174,12 +176,12 @@ public class GeneticAlgorithm
     public void showcaseAndSaveBestParent()
     {
         NeuralNet[] newPopulation = new NeuralNet[populationSize];
-        float highestFitness = 0;
-        int fittestIndex = -1;
+        float highestFitness = population[0].getFitness() ;
+        int fittestIndex = 0;
 
-        for (int i = 0; i < populationSize; i++)
+        for (int i = 1; i < populationSize; i++)
         {
-            if (highestFitness <= population[i].getFitness())
+            if (highestFitness < population[i].getFitness())
             {
                 highestFitness = population[i].getFitness();
                 fittestIndex = i;
@@ -228,9 +230,9 @@ public class GeneticAlgorithm
 
     public NeuralNet selectBestNeuralNetFromCurrentGen()
     {
-        float tempHighestFitness = -10000;
+        float tempHighestFitness = -population[0].getFitness();
         NeuralNet bestIndividual = population[0];
-        for (int i = 0; i < populationSize; i++)
+        for (int i = 1; i < populationSize; i++)
         {
             float currentFitness = population[i].getFitness();
             if (currentFitness > tempHighestFitness)
@@ -253,5 +255,50 @@ public class GeneticAlgorithm
         string networkAsJSON = JsonUtility.ToJson(netToSave);
         string filePath = Application.dataPath + trainedFilePath + trainingName + "_" + generatation + ".json";
         File.WriteAllText(filePath, networkAsJSON);
+    }
+
+    public float calculateAverageFitness()
+    {
+        float total = 0;
+        for(int i = 0; i < populationSize; i++)
+        {
+            total += population[i].getFitness();
+        }
+
+        float average = total / populationSize;
+
+        return average;
+    }
+
+    public float calculateHighestFitness()
+    {
+        float highest = population[0].getFitness();
+        for (int i = 1; i < populationSize; i++)
+        {
+            float currentFitness = population[i].getFitness();
+            if (highest < currentFitness)
+            {
+                highest = currentFitness;
+            }
+        }
+
+        return highest;
+    }
+
+    public void saveLog()
+    {
+        string newFileName = Application.dataPath + logsFilePath + logfileName + ".csv";
+
+        string genertationDetails = generatation + "," + calculateAverageFitness() + "," + calculateHighestFitness() + "\n";
+
+
+        if (!File.Exists(newFileName))
+        {
+            string logHeaders = "GenerationNum" + "," + "AverageFitness" + "," + "HighestFitness" + "\n";
+
+            File.WriteAllText(newFileName, logHeaders);
+        }
+
+        File.AppendAllText(newFileName, genertationDetails);
     }
 }

@@ -15,8 +15,6 @@ public class PlayerCreature : MonoBehaviour {
     private Limb[] limbs;
     private float spawnHeight;
 
-    bool keyDown;
-
     // Use this for initialization
     void Start () {
         //create limb objects
@@ -26,12 +24,10 @@ public class PlayerCreature : MonoBehaviour {
             limbs[i] = new Limb(jointObjects[i], mainBody);
         }
 
-        keyDown = false;
     }
 	
 	// Update is called once per frame
 	void FixedUpdate() {
-        keyDown = false;
 
         List<float> inputs = new List<float>();
         for (int i = 0; i < limbs.Length; i++)

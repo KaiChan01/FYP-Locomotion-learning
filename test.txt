@@ -1,0 +1,1 @@
+Generation:34, Average Fitness: 0, Highest Fitness: 1259.007

@@ -238,10 +238,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileNames:
-  - TrainingFoward_500.json
-  - TrainingFoward_500.json
-  - TrainingFoward_500.json
-  - TrainingFoward_500.json
+  - TrainingFoward_850.json
+  - TrainingBackwards_500.json
+  - TrainingLeft_750.json
+  - TrainingFoward_850.json
   creaturePrefab: {fileID: 1166454869704676, guid: b9ff2bbb5d5979c469bf12e0163a47de,
     type: 2}
   spawnHeight: 0
