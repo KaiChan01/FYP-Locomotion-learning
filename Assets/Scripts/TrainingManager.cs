@@ -40,7 +40,7 @@ public class TrainingManager : MonoBehaviour {
     // Use this for initialization
     void Start() {
         training = false;
-        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, runLimit, randomPhase, mutationRate, trainingName);
+        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, runLimit, mutationRate, trainingName);
         phase = "Initialising";
     }
 

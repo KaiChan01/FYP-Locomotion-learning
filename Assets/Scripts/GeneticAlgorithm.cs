@@ -21,7 +21,6 @@ public class GeneticAlgorithm
     public int mutationRate;
 
     public int runLimit;
-    public int randomPhase;
     public float highestFromGeneration;
 
     private float fitnessSum;
@@ -33,7 +32,7 @@ public class GeneticAlgorithm
     private string trainedFilePath = "/TrainedNetworks/";
 
     //Create population and size
-    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int runLimit, int randomPhase, int mutationRate, string trainingName)
+    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int runLimit, int mutationRate, string trainingName)
     {
         this.generatation = 0;
         this.populationSize = populationSize;
@@ -42,9 +41,9 @@ public class GeneticAlgorithm
         population = new NeuralNet[populationSize];
         createRandomGeneration();
         this.mutationRate = mutationRate;
-        this.randomPhase = randomPhase;
         this.trainingName = trainingName;
     }
+
 
     public void createRandomGeneration()
     {
@@ -53,6 +52,7 @@ public class GeneticAlgorithm
             population[i] = new NeuralNet(neuralStructure);
         }
     }
+
 
     public void breedNewGeneration(int numOfParentsWanted)
     {
@@ -79,7 +79,6 @@ public class GeneticAlgorithm
         population = newGeneration;
     }
 
-    //Need to choose the best parents
 
     public void calculateTotalFitness()
     {
@@ -98,26 +97,27 @@ public class GeneticAlgorithm
 
         for (int j = 0; j < numOfParentsWanted; j++)
         {
-            float highestFitness = -100000;
+            //Temparary highest fitness 
+            float highestFitness = population[0].getFitness();
 
-            //TODO
-            //The BUG happens here, when the fit creature's performance isn't consistant
-            int highestIndex = -1;
+            int highestIndex = 0;
 
-            for (int i = 0; i < populationSize; i++)
+            //We can start the comparision at index 1 
+            for (int i = 1; i < populationSize; i++)
             {
-                //If the creature's fitness is new highest and isn't already in array
+                //If the creature's fitness is new highest and isn't already in array then update the current highestIndex
                 if (highestFitness <= population[i].getFitness() && parentIndex.IndexOf(i) == -1)
                 {
                     highestFitness = population[i].getFitness();
                     highestIndex = i;
                 }
                 //This way the better ones will more likely be choosen first
-
-                //We will save the highest from this generation
-
             }
+
+            //Add the new found highest Index to the parentIndex Array
             parentIndex.Add(highestIndex);
+
+            //The first parent found should be the fittest parent in this generation
             if (j == 0)
             {
                 highestFromGeneration = population[parentIndex[0]].getFitness();
@@ -127,24 +127,6 @@ public class GeneticAlgorithm
         return parentIndex.ToArray();
     }
 
-    public int chooseBestIndividual()
-    {
-        float highestFitness = population[0].getFitness();
-
-        int highestIndex = 0;
-
-        for (int i = 1; i < populationSize; i++)
-        {
-            //If the creature's fitness is new highest and isn't already in array
-            if (highestFitness <= population[i].getFitness())
-            {
-                highestFitness = population[i].getFitness();
-                highestIndex = i;
-            }
-        }
-        highestFromGeneration = population[highestIndex].getFitness();
-        return highestIndex;
-    }
 
     public void replaceOldParentWithNew(int numOfParentsWanted)
     {
@@ -159,20 +141,23 @@ public class GeneticAlgorithm
             newPopulation[i] = new NeuralNet(population[parentIndexArray[i]]);
         }
         
+        //Clone the best parents from the remainder of the population
         for (int i = parentIndexArray.Length; i < populationSize; i++)
         {
             //Copy best parents
-            int ranParent = UnityEngine.Random.Range(0, numOfParentsWanted);
-            newPopulation[i] = new NeuralNet(newPopulation[ranParent]);
+            int randParentIndex = UnityEngine.Random.Range(0, numOfParentsWanted);
+            newPopulation[i] = new NeuralNet(newPopulation[randParentIndex]);
         }
         population = newPopulation;
     }
 
+    //Used for the random testing phase, adds best parent of the generation during the phase
     public void addBestParent()
     {
-        bestParents.Add(population[chooseBestIndividual()]);
+        bestParents.Add(selectBestNeuralNetFromCurrentGen());
     }
 
+    //Re-plays and save the best parent into JSON
     public void showcaseAndSaveBestParent()
     {
         NeuralNet[] newPopulation = new NeuralNet[populationSize];
@@ -188,16 +173,20 @@ public class GeneticAlgorithm
             }
         }
 
+        //Every creature copies the best individual from the run
         for (int i = 0; i < populationSize; i++)
         {
             newPopulation[i] = new NeuralNet(population[fittestIndex]);
         }
 
+        //Persis the network into JSON formate
         saveNetwork(population[fittestIndex]);
 
         population = newPopulation;
     }
 
+
+    //Testing all the best parents from the random phase
     public void testAllInitialBest()
     {
         NeuralNet[] bestArray = bestParents.ToArray();
@@ -206,6 +195,7 @@ public class GeneticAlgorithm
             population[i] = bestArray[i];
         }
 
+        //Might remove this
         if(bestArray.Length < populationSize)
         {
             for(int i = bestArray.Length; i < populationSize; i++)
@@ -215,6 +205,8 @@ public class GeneticAlgorithm
         }
     }
 
+
+    //We mutate all the cloned individuals, we leave the original alone to prevent regression
     public void mutatePopulation(int numParentsChoosen)
     {
         for (int i = numParentsChoosen; i < populationSize; i++)
@@ -223,28 +215,30 @@ public class GeneticAlgorithm
         }
     }
 
-    public void incrementGeneration()
-    {
-        generatation++;
-    }
+
 
     public NeuralNet selectBestNeuralNetFromCurrentGen()
     {
-        float tempHighestFitness = -population[0].getFitness();
-        NeuralNet bestIndividual = population[0];
+        float tempHighestFitness = population[0].getFitness();
+        int bestIndex = 0;
+
         for (int i = 1; i < populationSize; i++)
         {
             float currentFitness = population[i].getFitness();
             if (currentFitness > tempHighestFitness)
             {
                 tempHighestFitness = currentFitness;
-                bestIndividual = population[i];
+                bestIndex = i;
             }
         }
-
+        
+        NeuralNet bestIndividual = population[bestIndex];
+        highestFromGeneration = bestIndividual.getFitness();
         return bestIndividual;
     }
 
+
+    //Saves the given network
     public void saveNetwork(NeuralNet network)
     {
         TrainedNetwork netToSave = new TrainedNetwork();
@@ -257,6 +251,8 @@ public class GeneticAlgorithm
         File.WriteAllText(filePath, networkAsJSON);
     }
 
+
+    
     public float calculateAverageFitness()
     {
         float total = 0;
@@ -264,11 +260,11 @@ public class GeneticAlgorithm
         {
             total += population[i].getFitness();
         }
-
         float average = total / populationSize;
-
         return average;
     }
+
+
 
     public float calculateHighestFitness()
     {
@@ -281,9 +277,10 @@ public class GeneticAlgorithm
                 highest = currentFitness;
             }
         }
-
         return highest;
     }
+
+
 
     public void saveLog()
     {
@@ -300,5 +297,12 @@ public class GeneticAlgorithm
         }
 
         File.AppendAllText(newFileName, genertationDetails);
+    }
+
+
+
+    public void incrementGeneration()
+    {
+        generatation++;
     }
 }

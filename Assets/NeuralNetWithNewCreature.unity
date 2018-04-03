@@ -405,7 +405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6855bd98dd185b54db2c69e4379b643b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trainingType: 2
+  trainingType: 0
   numberOfCreatures: 20
   numberOfParent: 2
   creaturePrefab: {fileID: 1843999084887676, guid: af11c574c324db646b7d29d1ea9248f6,
@@ -417,8 +417,8 @@ MonoBehaviour:
   randomPhase: 20
   mutationRate: 1000
   spawnHeight: 0
-  trainingName: TrainingBackwards
-  saveTraining: 0
+  trainingName: TestingAfterRefractor
+  saveTraining: 1
 --- !u!4 &1019187117
 Transform:
   m_ObjectHideFlags: 0
