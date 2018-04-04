@@ -11,7 +11,7 @@ public class Limb {
     //float force = 10;
 
 
-    public Limb(GameObject jointComponent, GameObject body)
+    public Limb(GameObject jointComponent)
     {
         joints = jointComponent.GetComponents(typeof(HingeJoint));
 

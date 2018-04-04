@@ -8,7 +8,6 @@ public enum TrainingType
     backward = 1,
     left = 2,
     right = 3,
-    standing = 4
 };
 
 public class TrainingManager : MonoBehaviour {
@@ -144,7 +143,7 @@ public class TrainingManager : MonoBehaviour {
         else if (ga.generatation > 0)
         {
             ga.addBestParent();
-            ga.createRandomGeneration();
+            ga.createNewGeneration();
             phase = "Testing Random";
         }
         Debug.Log(phase);

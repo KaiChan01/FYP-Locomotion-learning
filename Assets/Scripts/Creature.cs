@@ -4,28 +4,35 @@ using UnityEngine;
 
 public class Creature : MonoBehaviour {
 
+    //Variables for the type of locomotion to be trained
     public TrainingType trainingType;
     private Vector3 target;
+    private Vector3 startingPos;
+    private Vector3 previousPos;
     private float startingDistanceToTarget;
 
+    //Store limb and joints
     public GameObject mainBody;
     public GameObject[] jointObjects;
-
-    public float standingFitness;
-    public float desiredSpeed;
     private Limb[] limbs;
 
-    private BodyCollision bodycoll;
-    private NeuralNet brain = null;
-    private Vector3 startingPos;
-    private float fitness;
-    private bool alive;
-    private bool finishedInit = false;
+    //Configurable values for measuring fitness
+    public float standingFitness;
+    public float desiredSpeed;
 
+    //Detects collison
+    private BodyCollision bodycoll;
+
+    private NeuralNet brain = null;
+    private bool alive;
+
+    private float fitness;
     private TextMesh statusDesc;
     private string statusString;
-    private Vector3 previousPos;
+    
+    private bool finishedInit = false;
 
+    //Used for serialisation
     [HideInInspector]
     public bool training;
     [HideInInspector]
@@ -34,6 +41,10 @@ public class Creature : MonoBehaviour {
     public int trainingTime;
 
     void Start () {
+        statusDesc = GetComponent<TextMesh>();
+        bodycoll = mainBody.GetComponent<BodyCollision>();
+
+        //Create Limb objects that can control the joint movements
         limbs = new Limb[jointObjects.Length];
         for(int i = 0; i < jointObjects.Length; i++)
         {
@@ -41,15 +52,13 @@ public class Creature : MonoBehaviour {
         }
 
         fitness = 0;
-        finishedInit = true;
-        bodycoll = mainBody.GetComponent<BodyCollision>();
-        statusDesc = GetComponent<TextMesh>();
-        startingPos = mainBody.transform.position;
-
         alive = true;
-        previousPos = mainBody.transform.position;
-        Invoke("checkIfAlive", trainingTime);
 
+        startingPos = mainBody.transform.position;
+        previousPos = mainBody.transform.position;
+
+
+        //Create target position for the creature based on selected training type
         switch (trainingType)
         {
             case TrainingType.forward:
@@ -67,21 +76,24 @@ public class Creature : MonoBehaviour {
             case TrainingType.right:
                 target = new Vector3(startingPos.x + 10000, startingPos.y, startingPos.z);
                 break;
-
-            case TrainingType.standing:
-                target = startingPos;
-                break;
         }
 
         startingDistanceToTarget = Vector3.Distance(startingPos, target);
+
+        //Check if alive after the given training time has expired
+        Invoke("checkIfAlive", trainingTime);
+
+        //Finished initialising
+        finishedInit = true;
     }
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        //Right now the inputs are just the the angle's of the creature's joints
 
+        //If the creature finished initializing
         if (finishedInit == true)
         {
+            //Create an array of inputs from the angle of the limbs
             List<float> inputs = new List<float>();
             for(int i = 0; i < limbs.Length; i++)
             {
@@ -92,8 +104,10 @@ public class Creature : MonoBehaviour {
             }
             float[] inputsArray = inputs.ToArray();
 
+            //feed inputs into neural net to calculate output
             float[] outputs = brain.forwardFeed(inputsArray);
 
+            //Move the limbs to calculated position
             mapOutputsToInstruction(outputs);
         }
 
@@ -103,29 +117,32 @@ public class Creature : MonoBehaviour {
         }
     }
 
-        public void mapOutputsToInstruction(float[] outputs)
+
+    public void mapOutputsToInstruction(float[] outputs)
+    {
+        int outputIndex = 0;
+        for (int i = 0; i < limbs.Length; i++)
         {
-            int outputIndex = 0;
-            for (int i = 0; i < limbs.Length; i++)
+            for (int j = 0; j < limbs[i].getJointNum(); j++)
             {
-                for (int j = 0; j < limbs[i].getJointNum(); j++)
-                {
-                    limbs[i].addForceToHinge(outputs[outputIndex], j);
-                    outputIndex++;
-                }
+                limbs[i].addForceToHinge(outputs[outputIndex], j);
+                outputIndex++;
             }
         }
+    }
+
 
     public void calculateFitness()
     {
-        Vector3 currentPosition = mainBody.transform.position;
-
         statusString = "";
+
+        Vector3 currentPosition = mainBody.transform.position;
 
         //Speed and distance
         float distanceToTarget = Vector3.Distance(target, currentPosition);
         this.fitness += startingDistanceToTarget - distanceToTarget;
 
+        //Update textmesh
         statusString += "Target: " + target + "\n";
         statusString += "Position: " + currentPosition + "\n";
         statusString += "Distance to Target: " + distanceToTarget + "\n";
@@ -147,7 +164,7 @@ public class Creature : MonoBehaviour {
         float angleY = convertAngle(mainBody.transform.rotation.eulerAngles.y);
         float angleZ = convertAngle(mainBody.transform.rotation.eulerAngles.z);
 
-        // Use Euler angles
+        // Calculate the level of imbalnce of the creature, deduct fitness if threshold is met
         float imbalanceMeasure = (angleX + angleY + angleZ) * 0.1f; ;
 
         if (imbalanceMeasure < 5)
@@ -161,9 +178,7 @@ public class Creature : MonoBehaviour {
 
         statusString += "ImbalanceLevel: "+ imbalanceMeasure + "\n";
 
-        //inverse distance
-
-        //Standing fitness
+        //Check if creature is standing as tall as desired
         if (currentPosition.y <= standingFitness)
         {
             this.fitness -= 0.3f;
@@ -175,6 +190,7 @@ public class Creature : MonoBehaviour {
             statusString += "Standing: true(" + currentPosition.y + ")\n";
         }
 
+        // For calculating distance travelled to target
         if(trainingType == TrainingType.forward || trainingType == TrainingType.backward)
         {
             this.fitness -= Mathf.Abs(currentPosition.x - startingPos.x);
@@ -185,6 +201,7 @@ public class Creature : MonoBehaviour {
         }
 
         statusString += "Fitness: " + fitness + "\n";
+
 
         updateTextMesh();
         brain.setFitness(fitness);
@@ -221,8 +238,11 @@ public class Creature : MonoBehaviour {
         return Mathf.Abs(newAngle);
     }
 
-    void checkIfAlive()
+
+    // method to check if creature is still active
+    private void checkIfAlive()
     {
+        // If the creature isn't moving fast enough it is deemed dead
         float distanceTravelled = Vector3.Distance(previousPos, mainBody.transform.position);
         if(distanceTravelled < desiredSpeed || fitness < 1000)
         {

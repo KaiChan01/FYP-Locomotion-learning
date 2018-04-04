@@ -13,7 +13,6 @@ using System.IO;
 public class GeneticAlgorithm
 {
 
-    public float fitness { get; private set; }
     public int populationSize { get; private set; }
     public int generatation { get; private set; }
     public NeuralNet[] population { get; private set; }
@@ -23,7 +22,6 @@ public class GeneticAlgorithm
     public int runLimit;
     public float highestFromGeneration;
 
-    private float fitnessSum;
     private int[] neuralStructure;
     private string trainingName;
 
@@ -39,13 +37,13 @@ public class GeneticAlgorithm
         this.neuralStructure = neuralStructure;
         this.runLimit = runLimit;
         population = new NeuralNet[populationSize];
-        createRandomGeneration();
+        createNewGeneration();
         this.mutationRate = mutationRate;
         this.trainingName = trainingName;
     }
 
 
-    public void createRandomGeneration()
+    public void createNewGeneration()
     {
         for (int i = 0; i < populationSize; i++)
         {
@@ -80,13 +78,15 @@ public class GeneticAlgorithm
     }
 
 
-    public void calculateTotalFitness()
+    public float calculateTotalFitness()
     {
-        fitnessSum = 0;
+        float fitnessSum = 0;
         for (int i = 0; i < populationSize; i++)
         {
             fitnessSum += population[i].getFitness();
         }
+
+        return fitnessSum;
     }
 
     //This needs to be changed
@@ -255,12 +255,7 @@ public class GeneticAlgorithm
     
     public float calculateAverageFitness()
     {
-        float total = 0;
-        for(int i = 0; i < populationSize; i++)
-        {
-            total += population[i].getFitness();
-        }
-        float average = total / populationSize;
+        float average = (calculateTotalFitness() / populationSize);
         return average;
     }
 
