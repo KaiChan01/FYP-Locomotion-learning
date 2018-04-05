@@ -12,43 +12,44 @@ public enum TrainingType
 
 public class TrainingManager : MonoBehaviour {
 
+    public GameObject creaturePrefab;
+    private List<Creature> creatureList;
     public TrainingType trainingType;
     public int numberOfCreatures;
     public int numberOfParent;
-    public GameObject creaturePrefab;
-    private List<Creature> creatureList;
-    private bool training;
     public Text fitnessDisplay;
     public int trainingTime;
     public int maxTimeLimit = 60;
-    public int runLimit;
-    public int randomPhase;
+    public int generationLimit;
+    private int randomPhase;
     public int mutationRate;
     public float spawnHeight;
     public string trainingName;
     public bool saveTraining;
     private bool creaturesAlive;
     private float timePassedSinceNewGeneration;
+    private bool training;
 
-    //Not sure how to determine the layout of the neural net yet
+    //Predetermined Neural Network structure
     private int[] neuralNetLayout = { 8, 8, 8, 8, 8, 8 };
     private string phase;
 
     GeneticAlgorithm ga;
 
-    // Use this for initialization
+    // Initialization
     void Start() {
+        randomPhase = numberOfCreatures;
         training = false;
-        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, runLimit, mutationRate, trainingName);
+        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, generationLimit, mutationRate, trainingName);
         phase = "Initialising";
     }
 
-    // Update is called once per frame
+    // Update once per frame
     void FixedUpdate() {
 
+        //Controls for speeding up the simulation
         if (Input.GetKey("right") && Time.timeScale > 0)
         {
-
             Time.timeScale = 10;
         }
 
@@ -62,6 +63,7 @@ public class TrainingManager : MonoBehaviour {
             Time.timeScale = 1;
         }
 
+        //Training and scene construction
         if (training == true)
         {
             updateFitnessDisplay();
@@ -69,22 +71,23 @@ public class TrainingManager : MonoBehaviour {
         else
         {
             prepNextGeneration();
-            training = true;
-            Debug.Log(ga.generatation);
-            if (ga.generatation <= ga.runLimit)
+            if (ga.generatation <= ga.generationLimit)
             {
                 resetFitnessDisplay();
             }
+            training = true;
+            Debug.Log(ga.generatation);
         }
 
+        //Stop traing when max time limit is met
         timePassedSinceNewGeneration += Time.deltaTime;
-
         if(timePassedSinceNewGeneration > maxTimeLimit)
         {
-            maxTimeLimitReached();
+            stopTraining();
         }
     }
 
+    //Stop training and calculate final fitness 
     public void stopTraining()
     {
         training = false;
@@ -95,6 +98,7 @@ public class TrainingManager : MonoBehaviour {
         }
     }
 
+    //Preparing next generation
     public void prepNextGeneration()
     {
         if(ga.generatation > 0)
@@ -110,7 +114,8 @@ public class TrainingManager : MonoBehaviour {
             }
         }
 
-        if (ga.generatation > randomPhase && ga.generatation < runLimit)
+        //Mutate and optimise phase
+        if (ga.generatation > randomPhase && ga.generatation < generationLimit)
         {
             ga.replaceOldParentWithNew(numberOfParent);
 
@@ -122,16 +127,19 @@ public class TrainingManager : MonoBehaviour {
                 ga.saveNetwork(ga.selectBestNeuralNetFromCurrentGen());
             }
         }
-        else if (ga.generatation == runLimit)
+        // Last generation
+        else if (ga.generatation == generationLimit)
         {
             ga.showcaseAndSaveBestParent();
             phase = "Showcasing";
         }
-        else if (ga.generatation > runLimit)
+        // Run is over
+        else if (ga.generatation > generationLimit)
         {
             Application.Quit();
             UnityEditor.EditorApplication.isPlaying = false;
         }
+        // Compare best parents
         else if (ga.generatation == randomPhase)
         {
             ga.testAllInitialBest();
@@ -140,6 +148,7 @@ public class TrainingManager : MonoBehaviour {
             ga.saveNetwork(ga.selectBestNeuralNetFromCurrentGen());
 
         }
+        // Make random population
         else if (ga.generatation > 0)
         {
             ga.addBestParent();
@@ -148,11 +157,11 @@ public class TrainingManager : MonoBehaviour {
         }
         Debug.Log(phase);
 
-        putNewCreaturesInScene();
+        spawnCreaturesInScene();
         ga.incrementGeneration();
     }
 
-    public void putNewCreaturesInScene()
+    public void spawnCreaturesInScene()
     {
         creatureList = new List<Creature>();
 
@@ -185,6 +194,7 @@ public class TrainingManager : MonoBehaviour {
         fitnessDisplay.text = "";
     }
 
+    //Checks if any creatures are still alive
     public void checkIfCreaturesAreAlive()
     {
         bool creatureChecker = false;
@@ -207,10 +217,5 @@ public class TrainingManager : MonoBehaviour {
         {
             Invoke("checkIfCreaturesAreAlive", 1);
         }
-    }
-
-    public void maxTimeLimitReached()
-    {
-        stopTraining();
     }
 }

@@ -48,7 +48,7 @@ public class Creature : MonoBehaviour {
         limbs = new Limb[jointObjects.Length];
         for(int i = 0; i < jointObjects.Length; i++)
         {
-            limbs[i] = new Limb(jointObjects[i], mainBody);
+            limbs[i] = new Limb(jointObjects[i]);
         }
 
         fitness = 0;

@@ -19,7 +19,7 @@ public class GeneticAlgorithm
     public List<NeuralNet> bestParents = new List<NeuralNet>();
     public int mutationRate;
 
-    public int runLimit;
+    public int generationLimit;
     public float highestFromGeneration;
 
     private int[] neuralStructure;
@@ -30,12 +30,12 @@ public class GeneticAlgorithm
     private string trainedFilePath = "/TrainedNetworks/";
 
     //Create population and size
-    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int runLimit, int mutationRate, string trainingName)
+    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int generationLimit, int mutationRate, string trainingName)
     {
         this.generatation = 0;
         this.populationSize = populationSize;
         this.neuralStructure = neuralStructure;
-        this.runLimit = runLimit;
+        this.generationLimit = generationLimit;
         population = new NeuralNet[populationSize];
         createNewGeneration();
         this.mutationRate = mutationRate;

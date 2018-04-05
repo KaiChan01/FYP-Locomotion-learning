@@ -1,11 +1,15 @@
-﻿
+﻿/* Implementation of the Neural Network
+ * Author: Ka Yu Chan
+ * Date: 05/04/2018
+ * 
+ * Framework referenced fromhttps://www.youtube.com/watch?v=Yq0SfuiOVYE (05/04/18)
+ */
 
 using System.Collections.Generic;
 using UnityEngine;
 
 public class NeuralNet
 {
-
     /*
      * A neural net must have
      * 1. Inputs (creature Status)
@@ -18,8 +22,11 @@ public class NeuralNet
     private float[][] neurons;
     private float[][][] weights;
     private float fitnessValue;
+
+    //For un-serializing
     public int generation = 0;
 
+    // Default constructor
     public NeuralNet(int[] nnStructure)
     {
         this.nnStructure = new int[nnStructure.Length];
@@ -29,6 +36,7 @@ public class NeuralNet
         initaliseWeights();
     }
 
+    // contructor from flattened serialized weights
     public NeuralNet(float[] flatternedWeights, int[] nnStructure, int generation)
     {
         this.nnStructure = new int[nnStructure.Length];
@@ -38,8 +46,8 @@ public class NeuralNet
         initaliseNeurons();
         unflatternWeights(flatternedWeights);
     }
- 
-    //Copying a NN
+
+    //Copying a NeuralNet
     public NeuralNet(NeuralNet netForCopy)
     {
         this.nnStructure = new int[netForCopy.nnStructure.Length];
@@ -50,6 +58,7 @@ public class NeuralNet
         copyWeights(netForCopy.weights);
     }
 
+    // For Crossover (Not very effective in this approach)
     public NeuralNet(int[] parentStruct, float[][][] parent1Weights, float[][][] parent2Weights)
     {
         this.nnStructure = new int[parentStruct.Length];
@@ -95,6 +104,7 @@ public class NeuralNet
         weights = tempWeights.ToArray();
     }
 
+    //Create 2D neuron array
     void initaliseNeurons()
     {
         List<float[]> tempNeurons = new List<float[]>();
@@ -107,6 +117,7 @@ public class NeuralNet
         neurons = tempNeurons.ToArray();
     }
 
+    // unflatten serialized weights
     void unflatternWeights(float[] flatternedWeights)
     {
         int indexer = 0;
@@ -137,6 +148,7 @@ public class NeuralNet
         weights = tempWeights.ToArray();
     }
 
+    //Create 3D weights array
     void initaliseWeights()
     {
         //layer level
@@ -170,6 +182,7 @@ public class NeuralNet
         weights = tempWeights.ToArray();
     }
 
+    // Deep copy neurons
     void copyNeurons(float[][] neurons)
     {
         for (int layer = 0; layer < neurons.Length; layer++)
@@ -181,6 +194,7 @@ public class NeuralNet
         }
     }
 
+    // Deep copy weights
     void copyWeights(float[][][] weightsCopy)
     {
         List<float[][]> tempWeights = new List<float[][]>();
@@ -241,7 +255,7 @@ public class NeuralNet
         return neurons[nnStructure.Length - 1];
     }
 
-    //Should look into ReLU as an activation function
+    //All weights have a low chance of mutation when this method is called
     public void mutate(int mutationRate)
     {
         for (int layer = 0; layer < weights.Length; layer++)
@@ -308,36 +322,7 @@ public class NeuralNet
         return weights;
     }
 
-    /*
-    public string convertWeightToString()
-    {
-        string weightsString = "{";
-
-        for(int i = 0; i < weights.Length; i++)
-        {
-            weightsString += i + ": {";
-            for (int j = 0; j < weights[i].Length; j++)
-            {
-                weightsString += j + ": {";
-                for (int k = 0; k < weights[i][j].Length; k++)
-                {
-                    weightsString += k + ":" + weights[i][j][k] + ",";
-                }
-                weightsString += "},";
-            }
-            if(i == weights.Length-1)
-            {
-                weightsString += "}";
-            }
-            else
-            {
-                weightsString += "},";
-            }
-        }
-        return weightsString;
-    }
-    */
-
+    //Serialize 3D array of weights
     public float[] flattenWeightsToArray()
     {
         int sizeOfFlattenedArray = 0;
