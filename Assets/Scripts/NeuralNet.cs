@@ -278,7 +278,7 @@ public class NeuralNet
                     }
                     else if (randomValue <= 6)
                     {
-                        mutatedWeight += mutatedWeight * (UnityEngine.Random.Range(0f, 1f) + 1f);
+                        mutatedWeight = mutatedWeight * (UnityEngine.Random.Range(0f, 1f) + 1f);
                     }
                     else if (randomValue <= 8)
                     {

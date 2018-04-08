@@ -17,7 +17,7 @@ public class SimulationManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
         loadTrainedNetworks();
-        putNewCreaturesInScene();
+        spawnCreaturesInScene();
     }
 	
 	// Update is called once per frame
@@ -46,7 +46,7 @@ public class SimulationManager : MonoBehaviour {
         networkArray = networkList.ToArray();
     }
 
-    public void putNewCreaturesInScene()
+    public void spawnCreaturesInScene()
     {
         creatureList = new List<Creature>();
 

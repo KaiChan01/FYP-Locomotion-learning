@@ -8,7 +8,6 @@ public class PlayerCreature : MonoBehaviour {
     NeuralNet backwardNet;
     NeuralNet leftNet;
     NeuralNet rightNet;
-    NeuralNet idleNet;
 
     public GameObject mainBody;
     public GameObject[] jointObjects;

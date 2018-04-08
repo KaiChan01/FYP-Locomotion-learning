@@ -241,7 +241,7 @@ MonoBehaviour:
   - TrainingFoward_850.json
   - TrainingBackwards_500.json
   - TrainingLeft_750.json
-  - TrainingFoward_850.json
+  - TrainingRight_600.json
   creaturePrefab: {fileID: 1166454869704676, guid: b9ff2bbb5d5979c469bf12e0163a47de,
     type: 2}
   spawnHeight: 0

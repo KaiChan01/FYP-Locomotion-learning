@@ -8,9 +8,6 @@ public class Limb {
     Component[] joints;
     int jointNum;
 
-    //float force = 10;
-
-
     public Limb(GameObject jointComponent)
     {
         joints = jointComponent.GetComponents(typeof(HingeJoint));

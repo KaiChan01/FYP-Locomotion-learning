@@ -405,19 +405,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6855bd98dd185b54db2c69e4379b643b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trainingType: 0
-  numberOfCreatures: 20
-  numberOfParent: 2
   creaturePrefab: {fileID: 1843999084887676, guid: af11c574c324db646b7d29d1ea9248f6,
     type: 2}
+  trainingType: 3
+  numberOfCreatures: 20
+  numberOfParent: 4
   fitnessDisplay: {fileID: 166632393}
   trainingTime: 10
   maxTimeLimit: 60
-  runLimit: 1000
-  randomPhase: 20
+  generationLimit: 1000
   mutationRate: 1000
   spawnHeight: 0
-  trainingName: TestingAfterRefractor
+  trainingName: TrainingRight
   saveTraining: 1
 --- !u!4 &1019187117
 Transform:
