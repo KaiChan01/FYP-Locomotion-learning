@@ -29,18 +29,20 @@ public class TrainingManager : MonoBehaviour {
     private bool creaturesAlive;
     private float timePassedSinceNewGeneration;
     private bool training;
+    private string creatureName;
 
     //Predetermined Neural Network structure
-    private int[] neuralNetLayout = { 8, 8, 8, 8, 8, 8 };
+    public int[] neuralNetLayout = { 8, 8, 8, 8, 8, 8 };
     private string phase;
 
     GeneticAlgorithm ga;
 
     // Initialization
     void Start() {
+        creatureName = creaturePrefab.name;
         randomPhase = numberOfCreatures;
         training = false;
-        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, generationLimit, mutationRate, trainingName);
+        ga = new GeneticAlgorithm(numberOfCreatures, neuralNetLayout, generationLimit, mutationRate, trainingName, creatureName, spawnHeight);
         phase = "Initialising";
     }
 

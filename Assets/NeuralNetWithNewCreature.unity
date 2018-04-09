@@ -407,7 +407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creaturePrefab: {fileID: 1843999084887676, guid: af11c574c324db646b7d29d1ea9248f6,
     type: 2}
-  trainingType: 3
+  trainingType: 0
   numberOfCreatures: 20
   numberOfParent: 4
   fitnessDisplay: {fileID: 166632393}
@@ -415,9 +415,10 @@ MonoBehaviour:
   maxTimeLimit: 60
   generationLimit: 1000
   mutationRate: 1000
-  spawnHeight: 0
-  trainingName: TrainingRight
+  spawnHeight: 1
+  trainingName: Crawler_Forward
   saveTraining: 1
+  neuralNetLayout: 080000000800000008000000080000000800000008000000
 --- !u!4 &1019187117
 Transform:
   m_ObjectHideFlags: 0

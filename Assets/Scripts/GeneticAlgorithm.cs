@@ -24,13 +24,15 @@ public class GeneticAlgorithm
 
     private int[] neuralStructure;
     private string trainingName;
+    private string creatureName;
+    private float spawnHeight;
 
     private string logsFilePath = "/Logs/";
     private string logfileName = DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss");
     private string trainedFilePath = "/TrainedNetworks/";
 
     //Create population and size
-    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int generationLimit, int mutationRate, string trainingName)
+    public GeneticAlgorithm(int populationSize, int[] neuralStructure, int generationLimit, int mutationRate, string trainingName, string creatureName, float spawnHeight)
     {
         this.generatation = 0;
         this.populationSize = populationSize;
@@ -40,6 +42,8 @@ public class GeneticAlgorithm
         createNewGeneration();
         this.mutationRate = mutationRate;
         this.trainingName = trainingName;
+        this.creatureName = creatureName;
+        this.spawnHeight = spawnHeight;
     }
 
 
@@ -245,6 +249,8 @@ public class GeneticAlgorithm
         netToSave.nnStructure = network.getStructure();
         netToSave.weights = network.flattenWeightsToArray();
         netToSave.generation = generatation;
+        netToSave.creatureName = creatureName;
+        netToSave.spawnHeight = spawnHeight;
 
         string networkAsJSON = JsonUtility.ToJson(netToSave);
         string filePath = Application.dataPath + trainedFilePath + trainingName + "_" + generatation + ".json";

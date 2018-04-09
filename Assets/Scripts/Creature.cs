@@ -19,6 +19,7 @@ public class Creature : MonoBehaviour {
     //Configurable values for measuring fitness
     public float standingFitness;
     public float desiredSpeed;
+    public float balanceThreshold;
 
     //Detects collison
     private BodyCollision bodycoll;
@@ -167,7 +168,7 @@ public class Creature : MonoBehaviour {
         // Calculate the level of imbalnce of the creature, deduct fitness if threshold is met
         float imbalanceMeasure = (angleX + angleY + angleZ) * 0.1f; ;
 
-        if (imbalanceMeasure < 5)
+        if (imbalanceMeasure < balanceThreshold)
         {
             this.fitness += 1;
         }

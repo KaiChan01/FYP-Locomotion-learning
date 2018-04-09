@@ -237,11 +237,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e2e01fe2d0e8494d985be923cac4263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  creatures:
+  - {fileID: 1945076337345088, guid: e95041916f522b64b8b836f0bb99fe59, type: 2}
+  - {fileID: 1843999084887676, guid: af11c574c324db646b7d29d1ea9248f6, type: 2}
+  - {fileID: 1813128933867518, guid: 3a082dfda25e3dd4b999cb1351c67d63, type: 2}
+  - {fileID: 1897273230159654, guid: 193cb1e93a51fab40bba6d24711c3e9f, type: 2}
   fileNames:
-  - TrainingFoward_850.json
-  creaturePrefab: {fileID: 1843999084887676, guid: af11c574c324db646b7d29d1ea9248f6,
-    type: 2}
-  spawnHeight: 0
+  - TrainingRight_1950.json
 --- !u!4 &1019187117
 Transform:
   m_ObjectHideFlags: 0

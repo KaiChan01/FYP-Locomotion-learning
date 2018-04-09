@@ -2,22 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEditor;
 
 public class SimulationManager : MonoBehaviour {
+
+    public GameObject[] creatures;
+    private string[] creatureNames; 
 
     [Tooltip("Filenames in TrainedNetworks folder")]
     public string[] fileNames;
     private string trainedFilePath = "/TrainedNetworks/";
-    private List<Creature> creatureList;
-    public GameObject creaturePrefab;
+    private List<string> creatureNamesToLoad = new List<string>();
+    private List<Creature> creatureList = new List<Creature>();
+    private List<float> spawnHeights = new List<float>();
     private List<NeuralNet> networkList = new List<NeuralNet>();
     private NeuralNet[] networkArray;
-    public int spawnHeight;
 
     // Use this for initialization
     void Start () {
+        initializeCreatureNames();
         loadTrainedNetworks();
         spawnCreaturesInScene();
+        
     }
 	
 	// Update is called once per frame
@@ -35,8 +41,9 @@ public class SimulationManager : MonoBehaviour {
             {
                 string neuralData = File.ReadAllText(filePath);
                 trainedNetwork = JsonUtility.FromJson<TrainedNetwork>(neuralData);
-
                 networkList.Add(new NeuralNet(trainedNetwork.weights, trainedNetwork.nnStructure, trainedNetwork.generation));
+                creatureNamesToLoad.Add(trainedNetwork.creatureName);
+                spawnHeights.Add(trainedNetwork.spawnHeight);
             }
             else
             {
@@ -52,10 +59,22 @@ public class SimulationManager : MonoBehaviour {
 
         for (int i = 0; i < networkArray.Length; i++)
         {
-            creatureList.Add(((GameObject)Instantiate(creaturePrefab, new Vector3(i*15, spawnHeight, 0), creaturePrefab.transform.rotation)).GetComponent<Creature>());
+            string creatureType = creatureNamesToLoad[i];
+            int prefabIndex = ArrayUtility.IndexOf(creatureNames, creatureType); 
+
+            creatureList.Add(((GameObject)Instantiate(creatures[prefabIndex], new Vector3(i*15, spawnHeights[i], 0), creatures[prefabIndex].transform.rotation)).GetComponent<Creature>());
             creatureList[i].setBrain(networkArray[i]);
             creatureList[i].training = false;
             creatureList[i].generation = networkArray[i].getGeneration();
+        }
+    }
+
+    public void initializeCreatureNames()
+    {
+        creatureNames = new string[creatures.Length];
+        for (int i = 0; i < creatures.Length; i++)
+        {
+            creatureNames[i] = creatures[i].name;
         }
     }
 }
