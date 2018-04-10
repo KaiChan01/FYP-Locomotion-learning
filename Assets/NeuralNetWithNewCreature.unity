@@ -405,7 +405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6855bd98dd185b54db2c69e4379b643b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  creaturePrefab: {fileID: 1843999084887676, guid: af11c574c324db646b7d29d1ea9248f6,
+  creaturePrefab: {fileID: 1897273230159654, guid: 193cb1e93a51fab40bba6d24711c3e9f,
     type: 2}
   trainingType: 0
   numberOfCreatures: 20
@@ -413,12 +413,12 @@ MonoBehaviour:
   fitnessDisplay: {fileID: 166632393}
   trainingTime: 10
   maxTimeLimit: 60
-  generationLimit: 1000
+  generationLimit: 2000
   mutationRate: 1000
   spawnHeight: 1
-  trainingName: Crawler_Forward
+  trainingName: Octo_Forward
   saveTraining: 1
-  neuralNetLayout: 080000000800000008000000080000000800000008000000
+  neuralNetLayout: 0c000000080000000800000008000000080000000c000000
 --- !u!4 &1019187117
 Transform:
   m_ObjectHideFlags: 0

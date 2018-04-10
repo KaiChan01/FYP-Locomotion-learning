@@ -675,7 +675,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trainingType: 0
-  creatureName: Octo
   mainBody: {fileID: 1172205782960356}
   jointObjects:
   - {fileID: 1492824612490642}
@@ -683,8 +682,8 @@ MonoBehaviour:
   - {fileID: 1385750727716118}
   - {fileID: 1784748403963916}
   standingFitness: 0.7
-  desiredSpeed: 0
-  balanceThreshold: 0
+  desiredSpeed: 0.2
+  balanceThreshold: 5
   training: 1
   generation: 0
   trainingTime: 0
