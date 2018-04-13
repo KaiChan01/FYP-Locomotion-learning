@@ -244,6 +244,15 @@ MonoBehaviour:
   - {fileID: 1897273230159654, guid: 193cb1e93a51fab40bba6d24711c3e9f, type: 2}
   fileNames:
   - TrainingRight_1950.json
+  - Training_Forward_550.json
+  - Octo_Forward_1800.json
+  - Training_Forward_550.json
+  - Octo_Simu_350.json
+  - Training_Forward_550.json
+  - Crawler_Forward_850.json
+  - TrainingRight_1950.json
+  - Octo_Simu_350.json
+  - TrainingRight_1950.json
 --- !u!4 &1019187117
 Transform:
   m_ObjectHideFlags: 0

@@ -62,7 +62,7 @@ public class SimulationManager : MonoBehaviour {
             string creatureType = creatureNamesToLoad[i];
             int prefabIndex = ArrayUtility.IndexOf(creatureNames, creatureType); 
 
-            creatureList.Add(((GameObject)Instantiate(creatures[prefabIndex], new Vector3(i*15, spawnHeights[i], 0), creatures[prefabIndex].transform.rotation)).GetComponent<Creature>());
+            creatureList.Add(((GameObject)Instantiate(creatures[prefabIndex], new Vector3(Random.Range(-fileNames.Length*5, fileNames.Length*5), spawnHeights[i], Random.Range(-fileNames.Length * 10, fileNames.Length * 10)), creatures[prefabIndex].transform.rotation)).GetComponent<Creature>());
             creatureList[i].setBrain(networkArray[i]);
             creatureList[i].training = false;
             creatureList[i].generation = networkArray[i].getGeneration();

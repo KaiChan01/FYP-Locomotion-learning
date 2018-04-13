@@ -405,7 +405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6855bd98dd185b54db2c69e4379b643b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  creaturePrefab: {fileID: 1897273230159654, guid: 193cb1e93a51fab40bba6d24711c3e9f,
+  creaturePrefab: {fileID: 1813128933867518, guid: 3a082dfda25e3dd4b999cb1351c67d63,
     type: 2}
   trainingType: 0
   numberOfCreatures: 20
@@ -413,10 +413,10 @@ MonoBehaviour:
   fitnessDisplay: {fileID: 166632393}
   trainingTime: 10
   maxTimeLimit: 60
-  generationLimit: 2000
+  generationLimit: 500
   mutationRate: 1000
-  spawnHeight: 1
-  trainingName: Octo_Forward
+  spawnHeight: 0
+  trainingName: Octo_Simu
   saveTraining: 1
   neuralNetLayout: 0c000000080000000800000008000000080000000c000000
 --- !u!4 &1019187117
