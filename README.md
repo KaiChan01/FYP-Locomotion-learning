@@ -13,11 +13,11 @@ The framework can also deserialize the persisted files to recreate the creature 
 
 ## Demonstrations
 
-Training demonstration
+**Training demonstration**
 [![Video](http://i3.ytimg.com/vi/o0f3W0l6RBQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=o0f3W0l6RBQ)
 
-Demonstration of loading various trained creatures and letting them locomote together  
+**Demonstration of loading various trained creatures and letting them locomote together**
 [![Video](http://i3.ytimg.com/vi/W6KsiACIOUA/maxresdefault.jpg)](https://www.youtube.com/watch?v=W6KsiACIOUA)
 
-Demonstration of how the trained locomotion can be used with player controls
+**Demonstration of how the trained locomotion can be used with player controls**
 [![Video](http://i3.ytimg.com/vi/W6KsiACIOUA/maxresdefault.jpg)](https://www.youtube.com/watch?v=W6KsiACIOUA)
