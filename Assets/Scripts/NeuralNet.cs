@@ -2,7 +2,11 @@
  * Author: Ka Yu Chan
  * Date: 05/04/2018
  * 
- * Framework referenced from https://www.youtube.com/watch?v=Yq0SfuiOVYE (05/04/18)
+ * Framework referenced from:
+ * Title: Tutorial On Programming An Evolving Neural Network In C# w/ Unity3D
+ * Author: ChannelName - The One
+ * Date: 05/04/18
+ * Availability: https://www.youtube.com/watch?v=Yq0SfuiOVYE
  */
 
 using System.Collections.Generic;

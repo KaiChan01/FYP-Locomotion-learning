@@ -2,7 +2,11 @@
  * Author: Ka Yu Chan
  * Date: 12/10/2017
  * 
- * Framework referenced from https://www.youtube.com/watch?v=G8KJWONEeGo&t=450s (25/10/17)
+ * Framework referenced from:
+ * Title: Genetic Algorithm C# - Generic Implementation
+ * Author: Kryzarel
+ * Date: 25/10/17
+ * Availability: https://www.youtube.com/watch?v=G8KJWONEeGo&t=450s 
  */
 
 using UnityEngine;
